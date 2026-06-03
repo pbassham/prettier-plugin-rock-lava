@@ -105,11 +105,11 @@ The plugin registers the `.lava` extension and the `lava` / `Lava` VS Code
 language IDs automatically, so no `overrides` block is required. If your files
 use a different extension, add:
 
-   ```json
-   {
-     "overrides": [{ "files": "*.lava", "options": { "parser": "lava-html" } }]
-   }
-   ```
+```json
+{
+  "overrides": [{ "files": "*.lava", "options": { "parser": "lava-html" } }]
+}
+```
 
 ### VS Code setup
 
@@ -148,7 +148,6 @@ instead:
 
 The Prettier extension resolves the plugin from the `plugins` entry in your
 `.prettierrc`, so the same configuration powers both the CLI and the editor.
-
 
 <!-- ## Playground
 
