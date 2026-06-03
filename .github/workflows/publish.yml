@@ -7,18 +7,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       # Setup .npmrc file to publish to npm
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '16.x'
+          node-version: '20.x'
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
       - name: Install the packages
-        run: yarn install --frozen-lockfile --ignore-engines
+        run: bun install --frozen-lockfile
 
       - name: Build the code
-        run: yarn build
+        run: bun run build
         env:
           NODE_ENV: production
       - name: Release

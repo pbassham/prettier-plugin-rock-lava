@@ -29,16 +29,11 @@ describe('Unit: lavaHtmlGrammar', () => {
         expectMatchSucceeded(`{%- break-%}`).to.be.true;
         expectMatchSucceeded(`{%- continue -%}`).to.be.true;
         expectMatchSucceeded(`{%- lava-%}`).to.be.true;
-        expectMatchSucceeded(`{%- schema-%}{% endschema %}`).to.be.true;
-        expectMatchSucceeded(`{%- form 'form-type'-%}`).to.be.true;
         expectMatchSucceeded(`{%- # a comment -%}`).to.be.true;
         expectMatchSucceeded(`{%- javascript -%}{% endjavascript %}`).to.be.true;
         expectMatchSucceeded(`{%- include 'layout' -%}`).to.be.true;
         expectMatchSucceeded(`{%- layout 'full-width' -%}`).to.be.true;
         expectMatchSucceeded(`{%- layout none -%}`).to.be.true;
-        expectMatchSucceeded(`{% render 'filename' for array as item %}`).to.be.true;
-        expectMatchSucceeded(`{% section 'name' %}`).to.be.true;
-        expectMatchSucceeded(`{% sections 'name' %}`).to.be.true;
         expectMatchSucceeded(`{% style %}{% endstyle %}`).to.be.true;
         expectMatchSucceeded(`{% stylesheet %}{% endstylesheet %}`).to.be.true;
         expectMatchSucceeded(`{% assign variable_name = value %}`).to.be.true;
@@ -107,15 +102,13 @@ describe('Unit: lavaHtmlGrammar', () => {
         expectMatchSucceeded(`
           layout none
 
-          paginate search.results by 28
-            for item in search.results
-              if item.object_type != 'product'
-                continue
-              endif
+          for item in search.results
+            if item.object_type != 'product'
+              continue
+            endif
 
-              render 'product-item', product: item
-            endfor
-          endpaginate
+            include 'product-item', product: item
+          endfor
         `).to.be.true;
 
         function expectMatchSucceeded(text: string) {

@@ -63,14 +63,10 @@ export const CSS_DISPLAY_LAVA_TAGS: Record<string, string> = {
   // theme tags
   comment: 'none',
   echo: 'inline',
-  form: 'block',
   layout: 'none',
   lava: 'inline',
-  paginate: 'inline',
   raw: 'inline',
-  render: 'inline',
   include: 'inline',
-  section: 'block',
   style: 'none',
 
   // variable tags

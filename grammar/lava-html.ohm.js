@@ -31,8 +31,9 @@ module.exports = String.raw`Helpers {
 
 Lava <: Helpers {
   Node := (lavaNode | TextNode)*
-  openControl := "{{" | "{%"
+  openControl := "{{" | "{%" | "{["
   endOfTagName = &("-%}" | "-}}" | "%}" | "}}")
+  endOfShortcode = ~identifierCharacter
   endOfVarName = ~identifierCharacter
   endOfIdentifier = endOfTagName | endOfVarName
 
@@ -40,6 +41,8 @@ Lava <: Helpers {
     | lavaBlockComment
     | lavaRawTag
     | lavaDrop
+    | lavaShortcodeClose
+    | lavaShortcode
     | lavaTagClose
     | lavaTagOpen
     | lavaTag
@@ -58,9 +61,6 @@ Lava <: Helpers {
     | lavaTagIncrement
     | lavaTagLayout
     | lavaTagLava
-    | lavaTagRender
-    | lavaTagSection
-    | lavaTagSections
     | lavaTagWhen
 
   lavaTag =
@@ -70,11 +70,9 @@ Lava <: Helpers {
   lavaTagOpenStrict =
     | lavaTagOpenCase
     | lavaTagOpenCapture
-    | lavaTagOpenForm
     | lavaTagOpenFor
     | lavaTagOpenTablerow
     | lavaTagOpenIf
-    | lavaTagOpenPaginate
     | lavaTagOpenUnless
 
   lavaTagOpen =
@@ -82,6 +80,17 @@ Lava <: Helpers {
     | lavaTagOpenBaseCase
 
   lavaTagClose = "{%" "-"? space* "end" blockName space* tagMarkup "-"? "%}"
+
+  // Rock shortcodes use square-bracket delimiters: {[ name ... ]} and the
+  // block form {[ name ]} ... {[ endname ]}. Shortcode names are DB-defined
+  // and install-specific, so there is no enumerated list — every {[ ... ]}
+  // produces one node and the open/close pairing is resolved in stage-2.
+  shortcodeName = letter (alnum | "_" | "-")*
+  shortcodeMarkup = anyExceptStar<("-]}" | "]}")>
+  lavaShortcode =
+    "{[" "-"? space* (shortcodeName endOfShortcode) space* shortcodeMarkup "-"? "]}"
+  lavaShortcodeClose =
+    "{[" "-"? space* "end" shortcodeName space* shortcodeMarkup "-"? "]}"
 
   // These two are the same but transformed differently
   lavaTagRule<name, markup> =
@@ -105,12 +114,6 @@ Lava <: Helpers {
   lavaTagOpenCapture = lavaTagOpenRule<"capture", variableSegmentAsLookupMarkup>
   variableSegmentAsLookupMarkup = variableSegmentAsLookup space*
 
-  lavaTagSection = lavaTagRule<"section", lavaTagSectionMarkup>
-  lavaTagSectionMarkup = lavaString space*
-
-  lavaTagSections = lavaTagRule<"sections", lavaTagSectionsMarkup>
-  lavaTagSectionsMarkup = lavaString space*
-
   lavaTagLayout = lavaTagRule<"layout", lavaTagLayoutMarkup>
   lavaTagLayoutMarkup = lavaExpression space*
 
@@ -126,7 +129,6 @@ Lava <: Helpers {
   lavaTagLavaMarkup = tagMarkup
 
   lavaTagInclude = lavaTagRule<"include", lavaTagRenderMarkup>
-  lavaTagRender = lavaTagRule<"render", lavaTagRenderMarkup>
   lavaTagRenderMarkup =
     snippetExpression renderVariableExpression? renderAliasExpression? (argumentSeparatorOptionalComma tagArguments) space*
   snippetExpression = lavaString | variableSegmentAsLookup
@@ -134,9 +136,6 @@ Lava <: Helpers {
   renderAliasExpression = space+ "as" space+ variableSegment
 
   lavaTagOpenBaseCase = lavaTagOpenRule<blockName, tagMarkup>
-
-  lavaTagOpenForm = lavaTagOpenRule<"form", lavaTagOpenFormMarkup>
-  lavaTagOpenFormMarkup = arguments space*
 
   lavaTagOpenFor = lavaTagOpenRule<"for", lavaTagOpenForMarkup>
   lavaTagOpenForMarkup =
@@ -176,10 +175,6 @@ Lava <: Helpers {
     | "<")
     | ("contains" ~identifier)
 
-  lavaTagOpenPaginate = lavaTagOpenRule<"paginate", lavaTagOpenPaginateMarkup>
-  lavaTagOpenPaginateMarkup =
-    lavaExpression space+ "by" space+ lavaExpression argumentSeparatorOptionalComma tagArguments space*
-
   lavaDrop = "{{" "-"? space* lavaDropCases "-"? "}}"
   lavaDropCases = lavaVariable | lavaDropBaseCase
   lavaDropBaseCase = anyExceptStar<("-}}" | "}}")>
@@ -188,7 +183,6 @@ Lava <: Helpers {
   lavaRawTag =
     | lavaRawTagImpl<"raw">
     | lavaRawTagImpl<"javascript">
-    | lavaRawTagImpl<"schema">
     | lavaRawTagImpl<"stylesheet">
     | lavaRawTagImpl<"style">
   lavaRawTagImpl<name> =
@@ -270,11 +264,8 @@ Lava <: Helpers {
     letter (alnum | "_")*
 
   blockName =
-    // Shopify blocks
-    ( "form"
-    | "paginate"
     // Rock blocks
-    | "analyticssourcefinancialtransaction"
+    ( "analyticssourcefinancialtransaction"
     | "connectionopportunityconnectorgroup"
     | "financialscheduledtransactiondetail"
     | "interactioncontentchannelitemwrite"

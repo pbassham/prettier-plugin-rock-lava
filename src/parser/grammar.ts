@@ -49,7 +49,6 @@ export const VOID_ELEMENTS = (
 
 export const TAGS_WITHOUT_MARKUP = [
   'style',
-  'schema',
   'javascript',
   'else',
   'break',

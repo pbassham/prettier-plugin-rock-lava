@@ -22,6 +22,7 @@ export enum NodeTypes {
   Document = 'Document',
   LavaRawTag = 'LavaRawTag',
   LavaTag = 'LavaTag',
+  LavaShortcode = 'LavaShortcode',
   LavaBranch = 'LavaBranch',
   LavaDrop = 'LavaDrop',
   HtmlSelfClosingElement = 'HtmlSelfClosingElement',
@@ -53,7 +54,6 @@ export enum NodeTypes {
   AssignMarkup = 'AssignMarkup',
   CycleMarkup = 'CycleMarkup',
   ForMarkup = 'ForMarkup',
-  PaginateMarkup = 'PaginateMarkup',
   RawMarkup = 'RawMarkup',
   RenderMarkup = 'RenderMarkup',
   RenderVariableExpression = 'RenderVariableExpression',
@@ -78,16 +78,11 @@ export enum NamedTags {
   echo = 'echo',
   elseif = 'elseif',
   for = 'for',
-  form = 'form',
   if = 'if',
   include = 'include',
   increment = 'increment',
   layout = 'layout',
   lava = 'lava',
-  paginate = 'paginate',
-  render = 'render',
-  section = 'section',
-  sections = 'sections',
   tablerow = 'tablerow',
   unless = 'unless',
   when = 'when',
@@ -114,6 +109,7 @@ export const HtmlNodeTypes = [
 
 export const LavaNodeTypes = [
   NodeTypes.LavaTag,
+  NodeTypes.LavaShortcode,
   NodeTypes.LavaDrop,
   NodeTypes.LavaBranch,
   NodeTypes.LavaRawTag,
@@ -125,7 +121,6 @@ export type LavaParserOptions = ParserOptions<LavaHtmlNode> & {
   singleLineLinkTags: boolean;
   lavaSingleQuote: boolean;
   embeddedSingleQuote: boolean;
-  indentSchema: boolean;
 };
 export type LavaPrinterArgs = {
   leadingSpaceGroupId?: symbol[] | symbol;
@@ -253,6 +248,7 @@ export type ParentNode = Augmented<AST.ParentNode, AllAugmentations>;
 export type LavaRawTag = Augmented<AST.LavaRawTag, AllAugmentations>;
 export type LavaTag = Augmented<AST.LavaTag, AllAugmentations>;
 export type LavaTagNamed = Augmented<AST.LavaTagNamed, AllAugmentations>;
+export type LavaShortcode = Augmented<AST.LavaShortcode, AllAugmentations>;
 export type LavaBranch = Augmented<AST.LavaBranch, AllAugmentations>;
 export type LavaBranchNamed = Augmented<AST.LavaBranchNamed, AllAugmentations>;
 export type LavaDrop = Augmented<AST.LavaDrop, AllAugmentations>;

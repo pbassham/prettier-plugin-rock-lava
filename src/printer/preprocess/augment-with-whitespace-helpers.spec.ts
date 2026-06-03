@@ -86,7 +86,7 @@ describe('Module: augmentWithWhitespaceHelpers', () => {
           '{% if true %}hello{% endif %}',
         ];
         for (const node of nodes) {
-          ast = toAugmentedAst(`{% form -%} ${node} {% endform %}`);
+          ast = toAugmentedAst(`{% for a in b -%} ${node} {% endfor %}`);
           expectPath(ast, 'children.0.children.0.isLeadingWhitespaceSensitive').to.be.false;
 
           ast = toAugmentedAst(`{% if A -%} ${node} {% endif %}`);
@@ -255,7 +255,7 @@ describe('Module: augmentWithWhitespaceHelpers', () => {
       const firstChilds = [
         '{{ drop -}}',
         '{% if true %}world{% endif -%}',
-        '{% form "cart" %}...{% endform -%}',
+        '{% cache "cart" %}...{% endcache -%}',
         '{% assign x = true -%}',
       ];
       const secondChilds = [
@@ -305,7 +305,7 @@ describe('Module: augmentWithWhitespaceHelpers', () => {
         'hello world',
         '{{ drop }}',
         '{% if true %}world{% endif %}',
-        '{% form "cart" %}...{% endform %}',
+        '{% cache "cart" %}...{% endcache %}',
         '{% assign x = true %}',
       ];
 
@@ -328,7 +328,7 @@ describe('Module: augmentWithWhitespaceHelpers', () => {
       });
 
       it('should return false for pre-like nodes', () => {
-        ast = toAugmentedAst('{% form %}hello <pre> ... </pre> {% endform %}');
+        ast = toAugmentedAst('{% cache %}hello <pre> ... </pre> {% endcache %}');
         expectPath(ast, 'children.0.children.1.isTrailingWhitespaceSensitive').to.be.false;
       });
 
@@ -350,13 +350,13 @@ describe('Module: augmentWithWhitespaceHelpers', () => {
         expectPath(ast, 'children.0.children.1.children.0.isTrailingWhitespaceSensitive').to.be
           .false;
 
-        ast = toAugmentedAst('{% form %}branch a{%- endform %}');
+        ast = toAugmentedAst('{% cache %}branch a{%- endcache %}');
         expectPath(ast, 'children.0.children.0.isTrailingWhitespaceSensitive').to.be.false;
       });
     });
 
     it('should return false if the next child is not whitespace sensitive to the outer left', () => {
-      const blocks = ['<div> world </div>', '{% form %} hello {% endform %}'];
+      const blocks = ['<div> world </div>', '{% tablerow a in b %} hello {% endtablerow %}'];
       for (const block of blocks) {
         ast = toAugmentedAst(`<p>Hello ${block}</p>`);
         expectPath(ast, 'children.0.children.0.type').to.eql(NodeTypes.TextNode);
@@ -513,10 +513,10 @@ describe('Module: augmentWithWhitespaceHelpers', () => {
     });
 
     it('should work for LavaTags', () => {
-      ast = toAugmentedAst('{% form %} {% endform %}');
+      ast = toAugmentedAst('{% cache %} {% endcache %}');
       expectPath(ast, 'children.0.hasDanglingWhitespace').to.be.true;
 
-      ast = toAugmentedAst('{% form %}{% endform %}');
+      ast = toAugmentedAst('{% cache %}{% endcache %}');
       expectPath(ast, 'children.0.hasDanglingWhitespace').to.be.false;
     });
 

@@ -267,6 +267,7 @@ export function preferHardlineAsSurroundingSpaces(node: LavaHtmlNode) {
     case NodeTypes.HtmlElement:
       return isTagNameIncluded(['script', 'select'], node.name);
     case NodeTypes.LavaTag:
+    case NodeTypes.LavaShortcode:
       if (
         (node.prev && isTextLikeNode(node.prev)) ||
         (node.next && isTextLikeNode(node.next))

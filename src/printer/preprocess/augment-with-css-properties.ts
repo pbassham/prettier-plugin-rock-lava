@@ -99,6 +99,12 @@ function getCssDisplay(
         }
       }
 
+    case NodeTypes.LavaShortcode:
+      // Block shortcodes (`{[ x ]}...{[ endx ]}`) behave like block-level
+      // containers; inline shortcodes (`{[ x ]}`) behave like inline drops.
+      if (options.htmlWhitespaceSensitivity === 'strict') return 'inline';
+      return node.children && node.blockEndPosition ? 'block' : 'inline';
+
     case NodeTypes.LavaBranch:
     case NodeTypes.LavaDrop:
       return 'inline';
@@ -130,7 +136,6 @@ function getCssDisplay(
     case NodeTypes.AssignMarkup:
     case NodeTypes.CycleMarkup:
     case NodeTypes.ForMarkup:
-    case NodeTypes.PaginateMarkup:
     case NodeTypes.RenderMarkup:
     case NodeTypes.RenderVariableExpression:
     case NodeTypes.LogicalExpression:
@@ -192,6 +197,9 @@ function getNodeCssStyleWhiteSpace(node: AugmentedNode<WithSiblings>): string {
     case NodeTypes.LavaTag:
       return CSS_WHITE_SPACE_LAVA_TAGS[node.name] || CSS_WHITE_SPACE_DEFAULT;
 
+    case NodeTypes.LavaShortcode:
+      return CSS_WHITE_SPACE_DEFAULT;
+
     case NodeTypes.LavaBranch:
     case NodeTypes.LavaDrop:
       return CSS_WHITE_SPACE_DEFAULT;
@@ -220,7 +228,6 @@ function getNodeCssStyleWhiteSpace(node: AugmentedNode<WithSiblings>): string {
     case NodeTypes.AssignMarkup:
     case NodeTypes.CycleMarkup:
     case NodeTypes.ForMarkup:
-    case NodeTypes.PaginateMarkup:
     case NodeTypes.RenderMarkup:
     case NodeTypes.RenderVariableExpression:
     case NodeTypes.LogicalExpression:

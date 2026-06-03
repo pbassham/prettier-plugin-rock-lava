@@ -19,27 +19,31 @@ jobs:
       PRETTIER_MAJOR: ${{ matrix.prettier-major }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'yarn'
 
       - name: Install the packages
-        run: yarn install --frozen-lockfile --ignore-engines
+        run: bun install --frozen-lockfile
 
       - name: Build the code
-        run: yarn build
+        run: bun run build
         env:
           NODE_ENV: production
 
       - name: Check formatting
-        run: yarn format:check
+        run: bun run format:check
 
       - name: Run the unit tests
-        run: yarn test
+        run: bun run test
 
       - name: Run the idempotence tests
-        run: yarn test:idempotence
+        run: bun run test:idempotence

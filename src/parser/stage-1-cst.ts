@@ -59,6 +59,8 @@ export enum ConcreteNodeTypes {
   LavaTag = 'LavaTag',
   LavaTagOpen = 'LavaTagOpen',
   LavaTagClose = 'LavaTagClose',
+  LavaShortcode = 'LavaShortcode',
+  LavaShortcodeClose = 'LavaShortcodeClose',
   TextNode = 'TextNode',
   YAMLFrontmatter = 'YAMLFrontmatter',
 
@@ -77,7 +79,6 @@ export enum ConcreteNodeTypes {
   CycleMarkup = 'CycleMarkup',
   ForMarkup = 'ForMarkup',
   RenderMarkup = 'RenderMarkup',
-  PaginateMarkup = 'PaginateMarkup',
   RenderVariableExpression = 'RenderVariableExpression',
 }
 
@@ -169,6 +170,8 @@ export type ConcreteLavaNode =
   | ConcreteLavaTagOpen
   | ConcreteLavaTagClose
   | ConcreteLavaTag
+  | ConcreteLavaShortcode
+  | ConcreteLavaShortcodeClose
   | ConcreteLavaDrop;
 
 interface ConcreteBasicLavaNode<T> extends ConcreteBasicNode<T> {
@@ -197,9 +200,7 @@ export type ConcreteLavaTagOpenNamed =
   | ConcreteLavaTagOpenCapture
   | ConcreteLavaTagOpenIf
   | ConcreteLavaTagOpenUnless
-  | ConcreteLavaTagOpenForm
   | ConcreteLavaTagOpenFor
-  | ConcreteLavaTagOpenPaginate
   | ConcreteLavaTagOpenTablerow;
 
 export interface ConcreteLavaTagOpenNode<Name, Markup>
@@ -242,9 +243,6 @@ export interface ConcreteLavaComparison
   right: ConcreteLavaExpression;
 }
 
-export interface ConcreteLavaTagOpenForm
-  extends ConcreteLavaTagOpenNode<NamedTags.form, ConcreteLavaArgument[]> {}
-
 export interface ConcreteLavaTagOpenFor
   extends ConcreteLavaTagOpenNode<NamedTags.for, ConcreteLavaTagForMarkup> {}
 export interface ConcreteLavaTagForMarkup
@@ -261,18 +259,19 @@ export interface ConcreteLavaTagOpenTablerow
     ConcreteLavaTagForMarkup
   > {}
 
-export interface ConcreteLavaTagOpenPaginate
-  extends ConcreteLavaTagOpenNode<NamedTags.paginate, ConcretePaginateMarkup> {}
-
-export interface ConcretePaginateMarkup
-  extends ConcreteBasicNode<ConcreteNodeTypes.PaginateMarkup> {
-  collection: ConcreteLavaExpression;
-  pageSize: ConcreteLavaExpression;
-  args: ConcreteLavaNamedArgument[] | null;
-}
-
 export interface ConcreteLavaTagClose
   extends ConcreteBasicLavaNode<ConcreteNodeTypes.LavaTagClose> {
+  name: string;
+}
+
+export interface ConcreteLavaShortcode
+  extends ConcreteBasicLavaNode<ConcreteNodeTypes.LavaShortcode> {
+  name: string;
+  markup: string;
+}
+
+export interface ConcreteLavaShortcodeClose
+  extends ConcreteBasicLavaNode<ConcreteNodeTypes.LavaShortcodeClose> {
   name: string;
 }
 
@@ -287,9 +286,6 @@ export type ConcreteLavaTagNamed =
   | ConcreteLavaTagInclude
   | ConcreteLavaTagLayout
   | ConcreteLavaTagLava
-  | ConcreteLavaTagRender
-  | ConcreteLavaTagSection
-  | ConcreteLavaTagSections
   | ConcreteLavaTagWhen;
 
 export interface ConcreteLavaTagNode<Name, Markup>
@@ -312,10 +308,6 @@ export interface ConcreteLavaTagDecrement
     NamedTags.decrement,
     ConcreteLavaVariableLookup
   > {}
-export interface ConcreteLavaTagSection
-  extends ConcreteLavaTagNode<NamedTags.section, ConcreteStringLiteral> {}
-export interface ConcreteLavaTagSections
-  extends ConcreteLavaTagNode<NamedTags.sections, ConcreteStringLiteral> {}
 export interface ConcreteLavaTagLayout
   extends ConcreteLavaTagNode<NamedTags.layout, ConcreteLavaExpression> {}
 
@@ -343,8 +335,6 @@ export interface ConcreteLavaTagCycleMarkup
   args: ConcreteLavaExpression[];
 }
 
-export interface ConcreteLavaTagRender
-  extends ConcreteLavaTagNode<NamedTags.render, ConcreteLavaTagRenderMarkup> {}
 export interface ConcreteLavaTagInclude
   extends ConcreteLavaTagNode<NamedTags.include, ConcreteLavaTagRenderMarkup> {}
 
@@ -649,8 +639,6 @@ function toCST<T>(
     },
 
     lavaTagOpenCapture: 0,
-    lavaTagOpenForm: 0,
-    lavaTagOpenFormMarkup: 0,
     lavaTagOpenFor: 0,
     lavaTagOpenForMarkup: {
       type: ConcreteNodeTypes.ForMarkup,
@@ -665,16 +653,6 @@ function toCST<T>(
     lavaTagBreak: 0,
     lavaTagContinue: 0,
     lavaTagOpenTablerow: 0,
-    lavaTagOpenPaginate: 0,
-    lavaTagOpenPaginateMarkup: {
-      type: ConcreteNodeTypes.PaginateMarkup,
-      collection: 0,
-      pageSize: 4,
-      args: 6,
-      locStart,
-      locEnd,
-      source,
-    },
     lavaTagOpenCase: 0,
     lavaTagOpenCaseMarkup: 0,
     lavaTagWhen: 0,
@@ -704,6 +682,27 @@ function toCST<T>(
 
     lavaTagClose: {
       type: ConcreteNodeTypes.LavaTagClose,
+      name: 4,
+      whitespaceStart: 1,
+      whitespaceEnd: 7,
+      locStart,
+      locEnd,
+      source,
+    },
+
+    lavaShortcode: {
+      type: ConcreteNodeTypes.LavaShortcode,
+      name: 3,
+      markup: markupTrimEnd(6),
+      whitespaceStart: 1,
+      whitespaceEnd: 7,
+      locStart,
+      locEnd,
+      source,
+    },
+
+    lavaShortcodeClose: {
+      type: ConcreteNodeTypes.LavaShortcodeClose,
       name: 4,
       whitespaceStart: 1,
       whitespaceEnd: 7,

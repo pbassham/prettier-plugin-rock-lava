@@ -2,10 +2,6 @@ It should strip arguments from style tags
 {% style %}
 {% endstyle %}
 
-It should strip arguments from schema tags
-{% schema %}
-{% endschema %}
-
 It should strip arguments from javascript tags
 {% javascript %}
 {% endjavascript %}

@@ -41,6 +41,8 @@ import {
   ConcreteLavaDrop,
   ConcreteLavaNode,
   ConcreteLavaTagClose,
+  ConcreteLavaShortcode,
+  ConcreteLavaShortcodeClose,
   ConcreteNodeTypes,
   ConcreteTextNode,
   LavaCST,
@@ -63,7 +65,6 @@ import {
   ConcreteLavaTagOpenNamed,
   ConcreteLavaTagOpen,
   ConcreteLavaArgument,
-  ConcretePaginateMarkup,
   ConcreteLavaCondition,
   ConcreteLavaComparison,
   ConcreteLavaTagForMarkup,
@@ -105,7 +106,6 @@ export type LavaHtmlNode =
   | CycleMarkup
   | ForMarkup
   | RenderMarkup
-  | PaginateMarkup
   | RawMarkup
   | RenderVariableExpression
   | LavaLogicalExpression
@@ -123,7 +123,6 @@ export type LavaAST =
   | CycleMarkup
   | ForMarkup
   | RenderMarkup
-  | PaginateMarkup
   | RawMarkup
   | RenderVariableExpression
   | LavaLogicalExpression
@@ -139,8 +138,8 @@ export interface YAMLFrontmatter extends ASTNode<NodeTypes.YAMLFrontmatter> {
   body: string;
 }
 
-export type LavaNode = LavaRawTag | LavaTag | LavaDrop | LavaBranch;
-export type LavaStatement = LavaRawTag | LavaTag | LavaBranch;
+export type LavaNode = LavaRawTag | LavaTag | LavaShortcode | LavaDrop | LavaBranch;
+export type LavaStatement = LavaRawTag | LavaTag | LavaShortcode | LavaBranch;
 
 export interface HasChildren {
   children?: LavaHtmlNode[];
@@ -191,16 +190,11 @@ export type LavaTagNamed =
   | LavaTagDecrement
   | LavaTagEcho
   | LavaTagFor
-  | LavaTagForm
   | LavaTagIf
   | LavaTagInclude
   | LavaTagIncrement
   | LavaTagLayout
   | LavaTagLava
-  | LavaTagPaginate
-  | LavaTagRender
-  | LavaTagSection
-  | LavaTagSections
   | LavaTagTablerow
   | LavaTagUnless;
 
@@ -227,6 +221,23 @@ export interface LavaTagBaseCase extends LavaTagNode<string, string> {}
 export interface LavaTagEcho
   extends LavaTagNode<NamedTags.echo, LavaVariable> {}
 
+/**
+ * Rock shortcode: `{[ name ... ]}` (inline) or
+ * `{[ name ... ]} ... {[ endname ]}` (block). Shortcode names are
+ * install-specific, so there's a single node type and block/inline is
+ * resolved by stage-2 lookahead pairing.
+ */
+export interface LavaShortcode extends ASTNode<NodeTypes.LavaShortcode> {
+  name: string;
+  markup: string;
+  children?: LavaHtmlNode[];
+  whitespaceStart: '-' | '';
+  whitespaceEnd: '-' | '';
+  delimiterWhitespaceStart?: '-' | '';
+  delimiterWhitespaceEnd?: '-' | '';
+  blockStartPosition: Position;
+  blockEndPosition?: Position;
+}
 export interface LavaTagAssign
   extends LavaTagNode<NamedTags.assign, AssignMarkup> {}
 export interface AssignMarkup extends ASTNode<NodeTypes.AssignMarkup> {
@@ -253,9 +264,6 @@ export interface LavaTagCase
   extends LavaTagNode<NamedTags.case, LavaExpression> {}
 export interface LavaBranchWhen
   extends LavaBranchNode<NamedTags.when, LavaExpression[]> {}
-
-export interface LavaTagForm
-  extends LavaTagNode<NamedTags.form, LavaArgument[]> {}
 
 export interface LavaTagFor extends LavaTagNode<NamedTags.for, ForMarkup> {}
 export interface ForMarkup extends ASTNode<NodeTypes.ForMarkup> {
@@ -293,23 +301,9 @@ export interface LavaComparison extends ASTNode<NodeTypes.Comparison> {
   right: LavaConditionalExpression;
 }
 
-export interface LavaTagPaginate
-  extends LavaTagNode<NamedTags.paginate, PaginateMarkup> {}
-export interface PaginateMarkup extends ASTNode<NodeTypes.PaginateMarkup> {
-  collection: LavaExpression;
-  pageSize: LavaExpression;
-  args: LavaNamedArgument[];
-}
-
-export interface LavaTagRender
-  extends LavaTagNode<NamedTags.render, RenderMarkup> {}
 export interface LavaTagInclude
   extends LavaTagNode<NamedTags.include, RenderMarkup> {}
 
-export interface LavaTagSection
-  extends LavaTagNode<NamedTags.section, LavaString> {}
-export interface LavaTagSections
-  extends LavaTagNode<NamedTags.sections, LavaString> {}
 export interface LavaTagLayout
   extends LavaTagNode<NamedTags.layout, LavaExpression> {}
 
@@ -669,8 +663,8 @@ class ASTBuilder {
   }
 
   close(
-    node: ConcreteLavaTagClose | ConcreteHtmlTagClose,
-    nodeType: NodeTypes.LavaTag | NodeTypes.HtmlElement,
+    node: ConcreteLavaTagClose | ConcreteHtmlTagClose | ConcreteLavaShortcodeClose,
+    nodeType: NodeTypes.LavaTag | NodeTypes.HtmlElement | NodeTypes.LavaShortcode,
   ) {
     if (isLavaBranch(this.parent)) {
       this.parent.position.end = node.locStart;
@@ -713,6 +707,13 @@ class ASTBuilder {
       this.parent.delimiterWhitespaceStart = node.whitespaceStart ?? '';
       this.parent.delimiterWhitespaceEnd = node.whitespaceEnd ?? '';
     }
+    if (
+      this.parent.type == NodeTypes.LavaShortcode &&
+      node.type == ConcreteNodeTypes.LavaShortcodeClose
+    ) {
+      this.parent.delimiterWhitespaceStart = node.whitespaceStart ?? '';
+      this.parent.delimiterWhitespaceEnd = node.whitespaceEnd ?? '';
+    }
     this.cursor.pop();
     this.cursor.pop();
   }
@@ -725,7 +726,12 @@ function isLavaBranch(
 }
 
 function getName(
-  node: ConcreteLavaTagClose | ConcreteHtmlTagClose | ParentNode | undefined,
+  node:
+    | ConcreteLavaTagClose
+    | ConcreteLavaShortcodeClose
+    | ConcreteHtmlTagClose
+    | ParentNode
+    | undefined,
 ): string | LavaDrop | null {
   if (!node) return null;
   switch (node.type) {
@@ -821,6 +827,20 @@ function buildAst(
 
       case ConcreteNodeTypes.LavaTag: {
         builder.push(toLavaTag(node, { isBlockTag: false, ...options }));
+        break;
+      }
+
+      case ConcreteNodeTypes.LavaShortcode: {
+        if (hasMatchingShortcodeClose(cst as LavaCST, i, node.name)) {
+          builder.open(toLavaShortcode(node, { isBlockTag: true }));
+        } else {
+          builder.push(toLavaShortcode(node, { isBlockTag: false }));
+        }
+        break;
+      }
+
+      case ConcreteNodeTypes.LavaShortcodeClose: {
+        builder.close(node, NodeTypes.LavaShortcode);
         break;
       }
 
@@ -1067,6 +1087,52 @@ function toLavaTag(
   };
 }
 
+function toLavaShortcode(
+  node: ConcreteLavaShortcode,
+  options: { isBlockTag: boolean },
+): LavaShortcode {
+  return {
+    type: NodeTypes.LavaShortcode,
+    name: node.name,
+    markup: node.markup.trim(),
+    children: options.isBlockTag ? [] : undefined,
+    whitespaceStart: node.whitespaceStart ?? '',
+    whitespaceEnd: node.whitespaceEnd ?? '',
+    position: position(node),
+    blockStartPosition: position(node),
+    source: node.source,
+  };
+}
+
+/**
+ * Scans forward from the shortcode at `index` for a matching
+ * `{[ endname ]}`, accounting for nested shortcodes of the same name.
+ * Returns true when a matching close exists (i.e. it's a block shortcode).
+ */
+function hasMatchingShortcodeClose(
+  cst: LavaCST,
+  index: number,
+  name: string,
+): boolean {
+  let depth = 0;
+  for (let i = index + 1; i < cst.length; i++) {
+    const node = cst[i];
+    if (
+      node.type === ConcreteNodeTypes.LavaShortcode &&
+      node.name === name
+    ) {
+      depth++;
+    } else if (
+      node.type === ConcreteNodeTypes.LavaShortcodeClose &&
+      node.name === name
+    ) {
+      if (depth === 0) return true;
+      depth--;
+    }
+  }
+  return false;
+}
+
 function toNamedLavaTag(
   node: ConcreteLavaTagNamed | ConcreteLavaTagOpenNamed,
   options: ASTBuildOptions,
@@ -1114,8 +1180,7 @@ function toNamedLavaTag(
       };
     }
 
-    case NamedTags.include:
-    case NamedTags.render: {
+    case NamedTags.include: {
       return {
         ...lavaTagBaseAttributes(node),
         name: node.name,
@@ -1123,28 +1188,11 @@ function toNamedLavaTag(
       };
     }
 
-    case NamedTags.layout:
-    case NamedTags.section: {
+    case NamedTags.layout: {
       return {
         ...lavaTagBaseAttributes(node),
         name: node.name,
         markup: toExpression(node.markup) as LavaString,
-      };
-    }
-    case NamedTags.sections: {
-      return {
-        ...lavaTagBaseAttributes(node),
-        name: node.name,
-        markup: toExpression(node.markup) as LavaString,
-      };
-    }
-
-    case NamedTags.form: {
-      return {
-        ...lavaTagBaseAttributes(node),
-        name: node.name,
-        markup: node.markup.map(toLavaArgument),
-        children: [],
       };
     }
 
@@ -1154,15 +1202,6 @@ function toNamedLavaTag(
         ...lavaTagBaseAttributes(node),
         name: node.name,
         markup: toForMarkup(node.markup),
-        children: [],
-      };
-    }
-
-    case NamedTags.paginate: {
-      return {
-        ...lavaTagBaseAttributes(node),
-        name: node.name,
-        markup: toPaginateMarkup(node.markup),
         children: [],
       };
     }
@@ -1282,17 +1321,6 @@ function toForMarkup(node: ConcreteLavaTagForMarkup): ForMarkup {
   };
 }
 
-function toPaginateMarkup(node: ConcretePaginateMarkup): PaginateMarkup {
-  return {
-    type: NodeTypes.PaginateMarkup,
-    collection: toExpression(node.collection),
-    pageSize: toExpression(node.pageSize),
-    position: position(node),
-    args: node.args ? node.args.map(toNamedArgument) : [],
-    source: node.source,
-  };
-}
-
 function toRawMarkup(node: ConcreteHtmlRawTag | ConcreteLavaRawTag): RawMarkup {
   return {
     type: NodeTypes.RawMarkup,
@@ -1384,8 +1412,6 @@ function toRawMarkupKindFromLavaNode(node: ConcreteLavaRawTag): RawMarkupKinds {
         return RawMarkupKinds.text;
       }
       return RawMarkupKinds.css;
-    case 'schema':
-      return RawMarkupKinds.json;
     default:
       return RawMarkupKinds.text;
   }

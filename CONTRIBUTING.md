@@ -1,14 +1,14 @@
-# Contributing to @garrettjohnson/prettier-plugin-lava
+# Contributing to prettier-plugin-lava
 
 Requirements:
 
 - Node v16+
-- Yarn
+- Bun
 
 ```
-git clone git@github.com/garrettjohnson/prettier-plugin-lava
-yarn
-yarn test
+git clone git@github.com:pbassham/prettier-plugin-lava
+bun install
+bun test
 ```
 
 ## Context
@@ -32,36 +32,30 @@ The source code for this plugin is in TypeScript.
 This plugin uses prettier to format its TypeScript codebase. To format your code before a commit, run the following command:
 
 ```
-yarn format
+bun run format
 ```
 
 ## Testing
 
-This prettier plugin has two suites of tests: unit tests and integration tests.
-
-To run the unit tests:
-
-```bash
-yarn test:unit
-```
-
-To run the integration tests (where we make sure an input file gets transformed into another after running prettier):
-
-```bash
-yarn test:integration
-```
+This prettier plugin has two suites of tests: unit tests (`src/**/*.spec.ts`) and integration tests (`test/**/*.spec.ts`).
 
 To run all tests:
 
 ```bash
-yarn test
+bun run test
+```
+
+To run the idempotence tests (formatting an already-formatted file is a no-op):
+
+```bash
+bun run test:idempotence
 ```
 
 To run from source on another repo or file:
 
 ```bash
 # build the code so you can run it (only need to do it once)
-yarn build
+bun run build
 
 # run prettier on a file or folder
 prettier --plugin . --write path/to/files.lava
@@ -77,7 +71,7 @@ prettier --plugin . --write path/to/files.lava
 
 ## How to contribute
 
-1. Fork it ( https://github.com/garrettjohnson/prettier-plugin-lava/fork )
+1. Fork it ( https://github.com/pbassham/prettier-plugin-lava/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)

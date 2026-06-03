@@ -1,4 +1,4 @@
-## Releasing `@garrettjohnson/prettier-plugin-lava`
+## Releasing `prettier-plugin-lava`
 
 1. Check the Semantic Versioning page for info on how to version the new release: http://semver.org
 
@@ -6,7 +6,7 @@
 
    ```bash
    export VERSION="X.X.X"
-   yarn prerelease
+   bun run prerelease
    ```
 
 3. Run [`git changelog`](https://github.com/tj/git-extras) to update `CHANGELOG.md`.
@@ -22,7 +22,7 @@
    git add CHANGELOG.md package.json src/index.ts playground/index.html
    git commit -m "Bump version to $VERSION"
    git push origin "bump/v$VERSION"
-   gh pr create --base="main" --head="Shopify:bump/v$VERSION"
+   gh pr create --base="main" --head="pbassham:bump/v$VERSION"
    ```
 
 6. Merge your PR to main.
@@ -34,7 +34,7 @@
    git push origin v$VERSION
    ```
 
-8. [Create a GitHub release](https://github.com/Garrettjohnson/prettier-plugin-lava/releases/new) for the change.
+8. [Create a GitHub release](https://github.com/pbassham/prettier-plugin-lava/releases/new) for the change.
 
    ```
    git fetch origin

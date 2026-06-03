@@ -376,7 +376,7 @@ describe('Unit: Stage 2 (AST)', () => {
           });
         });
 
-        it('should parse render tags', () => {
+        it('should parse include tags', () => {
           [
             {
               expression: `"snippet"`,
@@ -433,9 +433,9 @@ describe('Unit: Stage 2 (AST)', () => {
             },
           ].forEach(
             ({ expression, snippetType, renderVariableExpression, alias, namedArguments }) => {
-              ast = toAST(`{% render ${expression} -%}`);
+              ast = toAST(`{% include ${expression} -%}`);
               expectPath(ast, 'children.0.type').to.equal('LavaTag');
-              expectPath(ast, 'children.0.name').to.equal('render');
+              expectPath(ast, 'children.0.name').to.equal('include');
               expectPath(ast, 'children.0.markup.type').to.equal('RenderMarkup');
               expectPath(ast, 'children.0.markup.snippet.type').to.equal(snippetType);
               if (renderVariableExpression) {

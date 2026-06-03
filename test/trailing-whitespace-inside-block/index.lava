@@ -1,7 +1,7 @@
 When it doesn't break, it should conditionally omit the trailing space
 
 It should omit the trailing space if it is stripped anyway
-{% form 'cart' %}space {%- endform %}
+{% tablerow x in col %}space {%- endtablerow %}
 
 It should not omit the trailing space if there's trailing whitespace and the
 parent is trailing space sensitive
@@ -11,9 +11,9 @@ parent is trailing space sensitive
 
 It should omit the trailing space if there's trailing whitespace and the parent
 is not trailing space sensitive
-{% form 'cart' %}space {% endform %}
-{%- form 'cart' %}space {% endform -%}
-{% form 'cart' %}space {% endform %}
+{% tablerow x in col %}space {% endtablerow %}
+{%- tablerow x in col %}space {% endtablerow -%}
+{% tablerow x in col %}space {% endtablerow %}
 
 It should not omit the whitespace because of whitespace stripping outside the tag
 <p>
@@ -22,4 +22,4 @@ It should not omit the whitespace because of whitespace stripping outside the ta
 
 It should omit the surrounding whitespace and inner whitespace for block
 rendering contexts
-<p>haha{% form 'cart' %}space {% endform %}haha</p>
+<p>haha{% tablerow x in col %}space {% endtablerow %}haha</p>

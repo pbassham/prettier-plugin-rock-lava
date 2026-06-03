@@ -109,16 +109,11 @@ printWidth: 1
     echo 'nope'
   endfor
 
-  form 'cart', cart
+  tablerow x in col
     echo 'huh?'
-  endform
+  endtablerow
 
   increment i
-  section 'string'
-
-  paginate col by 10, window_size:50
-    render 'icon' with x as bar, foo:bar
-  endpaginate
 %}
 
 It should keep newlines between tags

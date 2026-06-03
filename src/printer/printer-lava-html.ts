@@ -23,6 +23,7 @@ import {
   LavaPrinterArgs,
   LavaRawTag,
   LavaTag,
+  LavaShortcode,
   NodeTypes,
   Position,
   TextNode,
@@ -49,6 +50,7 @@ import {
   printLavaDrop,
   printLavaRawTag,
   printLavaTag,
+  printLavaShortcode,
 } from '~/printer/print/lava';
 import { printChildren } from '~/printer/print/children';
 import { embed2, embed3 } from '~/printer/embed';
@@ -300,6 +302,15 @@ function printNode(
       return printLavaTag(path as AstPath<LavaTag>, options, print, args);
     }
 
+    case NodeTypes.LavaShortcode: {
+      return printLavaShortcode(
+        path as AstPath<LavaShortcode>,
+        options,
+        print,
+        args,
+      );
+    }
+
     case NodeTypes.LavaBranch: {
       return printLavaBranch(path as AstPath<LavaBranch>, options, print, args);
     }
@@ -390,28 +401,6 @@ function printNode(
           line,
           join(
             line,
-            path.map((p) => print(p), 'args'),
-          ),
-        ]);
-      }
-
-      return doc;
-    }
-
-    case NodeTypes.PaginateMarkup: {
-      const doc = [
-        path.call(print, 'collection'),
-        line,
-        'by ',
-        path.call(print, 'pageSize'),
-      ];
-
-      if (node.args.length > 0) {
-        doc.push([
-          ',',
-          line,
-          join(
-            [',', line],
             path.map((p) => print(p), 'args'),
           ),
         ]);

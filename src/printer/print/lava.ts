@@ -10,6 +10,7 @@ import {
   LavaTag,
   LavaTagNamed,
   LavaBranchNamed,
+  LavaShortcode,
   NamedTags,
   NodeTypes,
   LavaRawTag,
@@ -180,8 +181,7 @@ function printNamedLavaBlockStart(
       ]);
     }
 
-    case NamedTags.include:
-    case NamedTags.render: {
+    case NamedTags.include: {
       const markup = node.markup;
       const trailingWhitespace =
         markup.args.length > 0 || (markup.variable && markup.alias)
@@ -193,17 +193,8 @@ function printNamedLavaBlockStart(
     case NamedTags.capture:
     case NamedTags.increment:
     case NamedTags.decrement:
-    case NamedTags.layout:
-    case NamedTags.section: {
+    case NamedTags.layout: {
       return tag(' ');
-    }
-    case NamedTags.sections: {
-      return tag(' ');
-    }
-
-    case NamedTags.form: {
-      const trailingWhitespace = node.markup.length > 1 ? line : ' ';
-      return tagWithArrayMarkup(trailingWhitespace);
     }
 
     case NamedTags.tablerow:
@@ -211,10 +202,6 @@ function printNamedLavaBlockStart(
       const trailingWhitespace =
         node.markup.reversed || node.markup.args.length > 0 ? line : ' ';
       return tag(trailingWhitespace);
-    }
-
-    case NamedTags.paginate: {
-      return tag(line);
     }
 
     case NamedTags.if:
@@ -481,6 +468,62 @@ export function printLavaTag(
   );
 }
 
+function printLavaShortcodeStart(node: LavaShortcode): Doc {
+  const markup = node.markup;
+  return group([
+    '{[',
+    ' ',
+    node.name,
+    markup ? ` ${markup}` : '',
+    ' ',
+    ']}',
+  ]);
+}
+
+export function printLavaShortcode(
+  path: AstPath<LavaShortcode>,
+  options: LavaParserOptions,
+  print: LavaPrinter,
+  args: LavaPrinterArgs,
+): Doc {
+  const node = path.getValue();
+
+  // Inline shortcode: `{[ name ... ]}` with no matching close.
+  if (!node.children || !node.blockEndPosition) {
+    return printLavaShortcodeStart(node);
+  }
+
+  const tagGroupId = Symbol('shortcode-group');
+  const blockStart = printLavaShortcodeStart(node); // {[ name ... ]}
+  const blockEnd: Doc = group(['{[', ` end${node.name} `, ']}']); // {[ endname ]}
+
+  let body: Doc = [];
+  if (node.children.length > 0) {
+    body = indent([
+      innerLeadingWhitespace(node as unknown as LavaTag),
+      printChildren(path, options, print, {
+        ...args,
+        leadingSpaceGroupId: tagGroupId,
+        trailingSpaceGroupId: tagGroupId,
+      }),
+    ]);
+  }
+
+  return group(
+    [
+      blockStart,
+      body,
+      innerTrailingWhitespace(node as unknown as LavaTag, args),
+      blockEnd,
+    ],
+    {
+      id: tagGroupId,
+      shouldBreak:
+        originallyHadLineBreaks(path, options) || isDeeplyNested(node),
+    },
+  );
+}
+
 export function printLavaRawTag(
   path: AstPath<LavaRawTag>,
   options: LavaParserOptions,
@@ -490,7 +533,6 @@ export function printLavaRawTag(
   let body: Doc = [];
   const node = path.getValue();
   const hasEmptyBody = node.body.value.trim() === '';
-  const shouldNotIndentBody = node.name === 'schema' && !options.indentSchema;
   const shouldPrintAsIs =
     node.isIndentationSensitive ||
     !hasLineBreakInRange(
@@ -532,8 +574,6 @@ export function printLavaRawTag(
     ];
   } else if (hasEmptyBody) {
     body = [hardline];
-  } else if (shouldNotIndentBody) {
-    body = [hardline, path.call(print, 'body'), hardline];
   } else {
     body = [indent([hardline, path.call(print, 'body')]), hardline];
   }
@@ -745,14 +785,6 @@ function needsBlockEndLeadingWhitespaceStrippingOnBreak(node: LavaTag) {
 
 function cleanDoc(doc: Doc[]): Doc[] {
   return doc.filter((x) => x !== '');
-}
-
-function getSchema(contents: string, options: LavaParserOptions) {
-  try {
-    return [JSON.stringify(JSON.parse(contents), null, options.tabWidth), true];
-  } catch (e) {
-    return [contents, false];
-  }
 }
 
 function getSpaceBetweenLines(

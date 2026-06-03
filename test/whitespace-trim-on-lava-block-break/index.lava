@@ -22,7 +22,7 @@ In LavaTag children array,
 If it breaks and the htmlWhitespaceSensitivity is 'strict', then add whitespace stripping
 htmlWhitespaceSensitivity: "strict"
 printWidth: 30
-{% form 'cart' %}aaaaaaaaaaaa{% endform %}
+{% cache 'cart' %}aaaaaaaaaaaa{% endcache %}
 
 If it breaks and the htmlWhitespaceSensitivity is 'ignore', then omit whitespace stripping
 htmlWhitespaceSensitivity: "ignore"
@@ -32,11 +32,11 @@ printWidth: 30
 If it breaks and the node display is inline add whitespace stripping
 printWidth: 30
 <!-- display: inline -->
-{% form 'cart' %}aaaaaaaaaaaa{% endform %}
+{% cache 'cart' %}aaaaaaaaaaaa{% endcache %}
 
 When it does break, there was a whitespace, and the parent is not
 leading/trailing space sensitive, it should not change anything
-{% form 'cart' %} aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa {% endform %}
+{% cache 'cart' %} aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa {% endcache %}
 
 --------------------------------------------------------------------------------
 

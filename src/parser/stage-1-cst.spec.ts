@@ -447,7 +447,7 @@ describe('Unit: Stage 1 (CST)', () => {
           });
         });
 
-        it('should parse the render tag', () => {
+        it('should parse the include tag', () => {
           [
             {
               expression: `"snippet"`,
@@ -504,9 +504,9 @@ describe('Unit: Stage 1 (CST)', () => {
             },
           ].forEach(
             ({ expression, snippetType, renderVariableExpression, alias, namedArguments }) => {
-              cst = toCST(`{% render ${expression} -%}`);
+              cst = toCST(`{% include ${expression} -%}`);
               expectPath(cst, '0.type').to.equal('LavaTag');
-              expectPath(cst, '0.name').to.equal('render');
+              expectPath(cst, '0.name').to.equal('include');
               expectPath(cst, '0.markup.type').to.equal('RenderMarkup');
               expectPath(cst, '0.markup.snippet.type').to.equal(snippetType);
               if (renderVariableExpression) {
@@ -533,22 +533,6 @@ describe('Unit: Stage 1 (CST)', () => {
       });
 
       describe(`${title} - Case: LavaTagOpen`, () => {
-        it('should parse the form tag open markup as arguments', () => {
-          [
-            { expression: `product`, args: [{ type: 'VariableLookup' }] },
-            { expression: `"product"`, args: [{ type: 'String' }] },
-          ].forEach(({ expression, args }) => {
-            cst = toCST(`{% form ${expression} -%}`);
-            expectPath(cst, '0.type').to.equal('LavaTagOpen');
-            expectPath(cst, '0.name').to.equal('form');
-            expectPath(cst, '0.markup').to.have.lengthOf(args.length, expression);
-            args.forEach((arg, i) => {
-              expectPath(cst, `0.markup.${i}.type`).to.equal(arg.type);
-            });
-            expectPath(cst, '0.whitespaceEnd').to.equal('-');
-          });
-        });
-
         it('should parse the for and tablerow tags open markup as ForMarkup', () => {
           ['for', 'tablerow'].forEach((tagName) => {
             [
@@ -649,49 +633,6 @@ describe('Unit: Stage 1 (CST)', () => {
             args.forEach((arg, i) => {
               expectPath(cst, `0.markup.${i}.type`).to.equal(arg.type);
             });
-          });
-        });
-
-        it('should parse the paginate tag open markup as arguments', () => {
-          [
-            {
-              expression: `collection.products by 50`,
-              collection: { type: 'VariableLookup' },
-              pageSize: { type: 'Number' },
-            },
-            {
-              expression: `collection.products by setting.value`,
-              collection: { type: 'VariableLookup' },
-              pageSize: { type: 'VariableLookup' },
-            },
-            {
-              expression: `collection.products by setting.value window_size: 2`,
-              collection: { type: 'VariableLookup' },
-              pageSize: { type: 'VariableLookup' },
-              args: [{ type: 'Number' }],
-            },
-            {
-              expression: `collection.products by setting.value, window_size: 2`,
-              collection: { type: 'VariableLookup' },
-              pageSize: { type: 'VariableLookup' },
-              args: [{ type: 'Number' }],
-            },
-          ].forEach(({ expression, collection, pageSize, args }) => {
-            cst = toCST(`{% paginate ${expression} -%}`);
-            expectPath(cst, '0.type').to.equal('LavaTagOpen');
-            expectPath(cst, '0.name').to.equal('paginate');
-            expectPath(cst, '0.markup.type').to.equal('PaginateMarkup');
-            expectPath(cst, '0.markup.collection.type').to.equal(collection.type);
-            expectPath(cst, '0.markup.pageSize.type').to.equal(pageSize.type);
-            if (args) {
-              expectPath(cst, '0.markup.args').to.have.lengthOf(args.length);
-              args.forEach((arg, i) => {
-                expectPath(cst, `0.markup.args.${i}.type`).to.equal('NamedArgument');
-                expectPath(cst, `0.markup.args.${i}.value.type`).to.equal(arg.type);
-              });
-            } else {
-              expectPath(cst, '0.markup.args').to.have.lengthOf(0);
-            }
           });
         });
 
