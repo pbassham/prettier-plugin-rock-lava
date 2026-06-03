@@ -17,7 +17,7 @@ A clear and concise description of any alternative solutions or features you've 
 
 **Checklist**
 
-- [ ] I have checked and made sure that the proposal adheres to this plugin's [principles](https://github.com/pbassham/prettier-plugin-lava/blob/main/docs/principles/index.md)
+- [ ] I have checked and made sure that the proposal adheres to this plugin's [principles](https://github.com/pbassham/prettier-plugin-rock-lava/blob/main/docs/principles/index.md)
 
 **Additional context**
 Add any other context or screenshots about the feature request here.

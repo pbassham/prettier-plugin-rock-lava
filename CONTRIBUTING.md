@@ -1,4 +1,4 @@
-# Contributing to prettier-plugin-lava
+# Contributing to prettier-plugin-rock-lava
 
 Requirements:
 
@@ -6,7 +6,7 @@ Requirements:
 - Bun
 
 ```
-git clone git@github.com:pbassham/prettier-plugin-lava
+git clone git@github.com:pbassham/prettier-plugin-rock-lava
 bun install
 bun test
 ```
@@ -71,7 +71,7 @@ prettier --plugin . --write path/to/files.lava
 
 ## How to contribute
 
-1. Fork it ( https://github.com/pbassham/prettier-plugin-lava/fork )
+1. Fork it ( https://github.com/pbassham/prettier-plugin-rock-lava/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)

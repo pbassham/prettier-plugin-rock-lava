@@ -1,4 +1,4 @@
-## Releasing `prettier-plugin-lava`
+## Releasing `prettier-plugin-rock-lava`
 
 1. Check the Semantic Versioning page for info on how to version the new release: http://semver.org
 
@@ -34,7 +34,7 @@
    git push origin v$VERSION
    ```
 
-7. [Create a GitHub release](https://github.com/pbassham/prettier-plugin-lava/releases/new) for the change.
+7. [Create a GitHub release](https://github.com/pbassham/prettier-plugin-rock-lava/releases/new) for the change.
 
    ```
    git fetch origin

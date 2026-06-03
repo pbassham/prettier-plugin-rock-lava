@@ -1,14 +1,17 @@
 {
-  "name": "prettier-plugin-lava",
+  "name": "prettier-plugin-rock-lava",
   "version": "0.9.1",
   "description": "Prettier Lava/HTML plugin for Rock RMS",
-  "repository": "pbassham/prettier-plugin-lava",
-  "author": "Philip Bassham <pbassham@gmail.com>",
+  "repository": "pbassham/prettier-plugin-rock-lava",
+  "author": {
+    "name": "Philip Bassham",
+    "url": "https://github.com/pbassham"
+  },
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bugs": {
-    "url": "https://github.com/pbassham/prettier-plugin-lava/issues"
+    "url": "https://github.com/pbassham/prettier-plugin-rock-lava/issues"
   },
   "files": [
     "grammar/*",
