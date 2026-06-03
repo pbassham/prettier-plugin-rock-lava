@@ -28,7 +28,7 @@
     "build:standalone": "webpack -c webpack.config.js",
     "build:local": "bun run build && bun run copyto:playground",
     "copyto:playground": "cp ./standalone.js ./playground/assets/standalone.js",
-    "build:ts": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
+    "build:ts": "tsc -p tsconfig.build.json; tsc-alias -p tsconfig.build.json",
     "coverage": "nyc bun run test",
     "coverage:json": "nyc --reporter=json bun run test",
     "coverage:lcov": "nyc --reporter=lcov bun run test",
