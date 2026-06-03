@@ -40,43 +40,70 @@ See our [Wiki](https://github.com/pbassham/prettier-plugin-rock-lava/wiki) pages
 - [As a pre-commit hook](https://github.com/pbassham/prettier-plugin-rock-lava/wiki/Use-it-as-a-pre-commit-hook)
 - [With a bundler](https://github.com/pbassham/prettier-plugin-rock-lava/wiki/Use-it-with-a-bundler)
 
-## Using a local build in your other repositories
+## Using it in your other repositories
 
-Until this fork is published to npm, you can consume it directly from a local
-build. From this repo:
+### Per-project (recommended for shared/JS projects)
+
+Install it as a dev dependency in the repo where you edit `.lava` files:
 
 ```bash
-bun install
-bun run build   # emits dist/ and standalone.js
+npm install --save-dev prettier prettier-plugin-rock-lava
 ```
 
-Then, in the repository where you edit `.lava` files:
+Then add a `.prettierrc.json`:
 
-1. **Point Prettier at the plugin.** Add a `.prettierrc` (or `.prettierrc.json`)
-   with an absolute or relative path to this folder:
+```json
+{
+  "plugins": ["prettier-plugin-rock-lava"],
+  "printWidth": 600,
+  "tabWidth": 4
+}
+```
 
-   ```json
-   {
-     "plugins": ["/absolute/path/to/prettier-plugin-rock-lava"],
-     "printWidth": 600,
-     "tabWidth": 4
-   }
-   ```
+### Global setup (no per-project `node_modules`)
 
-   Alternatively, link it once with your package manager so a bare name works:
+If your Lava projects aren't JS projects and you don't want a `node_modules`
+folder in each one, install the plugin **once** in a fixed folder that is
+independent of your Node version manager (so the path doesn't break when you
+switch Node versions):
 
-   ```bash
-   # from prettier-plugin-rock-lava
-   bun link
-   # from your other repo
-   bun link prettier-plugin-rock-lava
-   ```
+```bash
+mkdir -p ~/.prettier-lava && cd ~/.prettier-lava
+npm init -y
+npm install prettier-plugin-rock-lava
+npm install -g prettier   # the Prettier engine, found via resolveGlobalModules
+```
 
-   then use `"plugins": ["prettier-plugin-rock-lava"]`.
+Create a global `~/.prettierrc.json` that points at the **absolute path** to the
+plugin's entry file:
 
-2. **Associate `.lava` files.** The plugin registers the `.lava` extension and
-   the `lava` / `Lava` VS Code language IDs automatically, so no `overrides`
-   block is required. If your files use a different extension, add:
+```json
+{
+  "plugins": [
+    "/Users/<you>/.prettier-lava/node_modules/prettier-plugin-rock-lava/dist/index.js"
+  ]
+}
+```
+
+> A bare package name does **not** work for a global config — Prettier resolves
+> plugins relative to the file being formatted, so you must use the absolute
+> path to `dist/index.js`.
+
+Update later with:
+
+```bash
+cd ~/.prettier-lava && npm install prettier-plugin-rock-lava@latest
+```
+
+### CLI
+
+```bash
+prettier --write "**/*.lava"
+```
+
+The plugin registers the `.lava` extension and the `lava` / `Lava` VS Code
+language IDs automatically, so no `overrides` block is required. If your files
+use a different extension, add:
 
    ```json
    {
@@ -84,16 +111,12 @@ Then, in the repository where you edit `.lava` files:
    }
    ```
 
-3. **Format from the CLI:**
-
-   ```bash
-   prettier --write "**/*.lava"
-   ```
-
 ### VS Code setup
 
 Install the [Prettier extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode),
-then add to the target repo's `.vscode/settings.json`:
+then configure it.
+
+For a **per-project** install, add to the repo's `.vscode/settings.json`:
 
 ```json
 {
@@ -108,8 +131,24 @@ then add to the target repo's `.vscode/settings.json`:
 }
 ```
 
+For the **global** setup above, add this to your **User** `settings.json`
+instead:
+
+```json
+{
+  "prettier.configPath": "/Users/<you>/.prettierrc.json",
+  "prettier.resolveGlobalModules": true,
+  "prettier.documentSelectors": ["**/*.lava"],
+  "[lava]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  }
+}
+```
+
 The Prettier extension resolves the plugin from the `plugins` entry in your
 `.prettierrc`, so the same configuration powers both the CLI and the editor.
+
 
 <!-- ## Playground
 
