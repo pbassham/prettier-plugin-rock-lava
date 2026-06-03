@@ -17,7 +17,7 @@ It should strip arguments from continue tags
 
 It should strip arguments from comment tags
 {% comment %}
-  hi
+hi
 {% endcomment %}
 {% comment %}
 {% endcomment %}

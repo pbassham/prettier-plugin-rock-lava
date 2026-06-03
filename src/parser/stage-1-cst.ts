@@ -106,18 +106,15 @@ export interface ConcreteHtmlNodeBase<T> extends ConcreteBasicNode<T> {
   attrList?: ConcreteAttributeNode[];
 }
 
-export interface ConcreteHtmlDoctype
-  extends ConcreteBasicNode<ConcreteNodeTypes.HtmlDoctype> {
+export interface ConcreteHtmlDoctype extends ConcreteBasicNode<ConcreteNodeTypes.HtmlDoctype> {
   legacyDoctypeString: string | null;
 }
 
-export interface ConcreteHtmlComment
-  extends ConcreteBasicNode<ConcreteNodeTypes.HtmlComment> {
+export interface ConcreteHtmlComment extends ConcreteBasicNode<ConcreteNodeTypes.HtmlComment> {
   body: string;
 }
 
-export interface ConcreteHtmlRawTag
-  extends ConcreteHtmlNodeBase<ConcreteNodeTypes.HtmlRawTag> {
+export interface ConcreteHtmlRawTag extends ConcreteHtmlNodeBase<ConcreteNodeTypes.HtmlRawTag> {
   name: string;
   body: string;
   blockStartLocStart: number;
@@ -125,20 +122,16 @@ export interface ConcreteHtmlRawTag
   blockEndLocStart: number;
   blockEndLocEnd: number;
 }
-export interface ConcreteHtmlVoidElement
-  extends ConcreteHtmlNodeBase<ConcreteNodeTypes.HtmlVoidElement> {
+export interface ConcreteHtmlVoidElement extends ConcreteHtmlNodeBase<ConcreteNodeTypes.HtmlVoidElement> {
   name: string;
 }
-export interface ConcreteHtmlSelfClosingElement
-  extends ConcreteHtmlNodeBase<ConcreteNodeTypes.HtmlSelfClosingElement> {
+export interface ConcreteHtmlSelfClosingElement extends ConcreteHtmlNodeBase<ConcreteNodeTypes.HtmlSelfClosingElement> {
   name: (ConcreteTextNode | ConcreteLavaDrop)[];
 }
-export interface ConcreteHtmlTagOpen
-  extends ConcreteHtmlNodeBase<ConcreteNodeTypes.HtmlTagOpen> {
+export interface ConcreteHtmlTagOpen extends ConcreteHtmlNodeBase<ConcreteNodeTypes.HtmlTagOpen> {
   name: (ConcreteTextNode | ConcreteLavaDrop)[];
 }
-export interface ConcreteHtmlTagClose
-  extends ConcreteHtmlNodeBase<ConcreteNodeTypes.HtmlTagClose> {
+export interface ConcreteHtmlTagClose extends ConcreteHtmlNodeBase<ConcreteNodeTypes.HtmlTagClose> {
   name: (ConcreteTextNode | ConcreteLavaDrop)[];
 }
 
@@ -154,14 +147,10 @@ export type ConcreteAttributeNode =
   | ConcreteAttrUnquoted
   | ConcreteAttrEmpty;
 
-export interface ConcreteAttrSingleQuoted
-  extends ConcreteAttributeNodeBase<ConcreteNodeTypes.AttrSingleQuoted> {}
-export interface ConcreteAttrDoubleQuoted
-  extends ConcreteAttributeNodeBase<ConcreteNodeTypes.AttrDoubleQuoted> {}
-export interface ConcreteAttrUnquoted
-  extends ConcreteAttributeNodeBase<ConcreteNodeTypes.AttrUnquoted> {}
-export interface ConcreteAttrEmpty
-  extends ConcreteBasicNode<ConcreteNodeTypes.AttrEmpty> {
+export interface ConcreteAttrSingleQuoted extends ConcreteAttributeNodeBase<ConcreteNodeTypes.AttrSingleQuoted> {}
+export interface ConcreteAttrDoubleQuoted extends ConcreteAttributeNodeBase<ConcreteNodeTypes.AttrDoubleQuoted> {}
+export interface ConcreteAttrUnquoted extends ConcreteAttributeNodeBase<ConcreteNodeTypes.AttrUnquoted> {}
+export interface ConcreteAttrEmpty extends ConcreteBasicNode<ConcreteNodeTypes.AttrEmpty> {
   name: (ConcreteLavaDrop | ConcreteTextNode)[];
 }
 
@@ -179,8 +168,7 @@ interface ConcreteBasicLavaNode<T> extends ConcreteBasicNode<T> {
   whitespaceEnd: null | '-';
 }
 
-export interface ConcreteLavaRawTag
-  extends ConcreteBasicLavaNode<ConcreteNodeTypes.LavaRawTag> {
+export interface ConcreteLavaRawTag extends ConcreteBasicLavaNode<ConcreteNodeTypes.LavaRawTag> {
   name: string;
   body: string;
   markup: string;
@@ -203,75 +191,83 @@ export type ConcreteLavaTagOpenNamed =
   | ConcreteLavaTagOpenFor
   | ConcreteLavaTagOpenTablerow;
 
-export interface ConcreteLavaTagOpenNode<Name, Markup>
-  extends ConcreteBasicLavaNode<ConcreteNodeTypes.LavaTagOpen> {
+export interface ConcreteLavaTagOpenNode<
+  Name,
+  Markup,
+> extends ConcreteBasicLavaNode<ConcreteNodeTypes.LavaTagOpen> {
   name: Name;
   markup: Markup;
 }
 
-export interface ConcreteLavaTagOpenBaseCase
-  extends ConcreteLavaTagOpenNode<string, string> {}
+export interface ConcreteLavaTagOpenBaseCase extends ConcreteLavaTagOpenNode<
+  string,
+  string
+> {}
 
-export interface ConcreteLavaTagOpenCapture
-  extends ConcreteLavaTagOpenNode<
-    NamedTags.capture,
-    ConcreteLavaVariableLookup
-  > {}
+export interface ConcreteLavaTagOpenCapture extends ConcreteLavaTagOpenNode<
+  NamedTags.capture,
+  ConcreteLavaVariableLookup
+> {}
 
-export interface ConcreteLavaTagOpenCase
-  extends ConcreteLavaTagOpenNode<NamedTags.case, ConcreteLavaExpression> {}
-export interface ConcreteLavaTagWhen
-  extends ConcreteLavaTagNode<NamedTags.when, ConcreteLavaExpression[]> {}
+export interface ConcreteLavaTagOpenCase extends ConcreteLavaTagOpenNode<
+  NamedTags.case,
+  ConcreteLavaExpression
+> {}
+export interface ConcreteLavaTagWhen extends ConcreteLavaTagNode<
+  NamedTags.when,
+  ConcreteLavaExpression[]
+> {}
 
-export interface ConcreteLavaTagOpenIf
-  extends ConcreteLavaTagOpenNode<NamedTags.if, ConcreteLavaCondition[]> {}
-export interface ConcreteLavaTagOpenUnless
-  extends ConcreteLavaTagOpenNode<NamedTags.unless, ConcreteLavaCondition[]> {}
-export interface ConcreteLavaTagElseif
-  extends ConcreteLavaTagNode<NamedTags.elseif, ConcreteLavaCondition[]> {}
+export interface ConcreteLavaTagOpenIf extends ConcreteLavaTagOpenNode<
+  NamedTags.if,
+  ConcreteLavaCondition[]
+> {}
+export interface ConcreteLavaTagOpenUnless extends ConcreteLavaTagOpenNode<
+  NamedTags.unless,
+  ConcreteLavaCondition[]
+> {}
+export interface ConcreteLavaTagElseif extends ConcreteLavaTagNode<
+  NamedTags.elseif,
+  ConcreteLavaCondition[]
+> {}
 
-export interface ConcreteLavaCondition
-  extends ConcreteBasicNode<ConcreteNodeTypes.Condition> {
+export interface ConcreteLavaCondition extends ConcreteBasicNode<ConcreteNodeTypes.Condition> {
   relation: 'and' | 'or' | null;
   expression: ConcreteLavaComparison | ConcreteLavaExpression;
 }
 
-export interface ConcreteLavaComparison
-  extends ConcreteBasicNode<ConcreteNodeTypes.Comparison> {
+export interface ConcreteLavaComparison extends ConcreteBasicNode<ConcreteNodeTypes.Comparison> {
   comparator: Comparators;
   left: ConcreteLavaExpression;
   right: ConcreteLavaExpression;
 }
 
-export interface ConcreteLavaTagOpenFor
-  extends ConcreteLavaTagOpenNode<NamedTags.for, ConcreteLavaTagForMarkup> {}
-export interface ConcreteLavaTagForMarkup
-  extends ConcreteBasicNode<ConcreteNodeTypes.ForMarkup> {
+export interface ConcreteLavaTagOpenFor extends ConcreteLavaTagOpenNode<
+  NamedTags.for,
+  ConcreteLavaTagForMarkup
+> {}
+export interface ConcreteLavaTagForMarkup extends ConcreteBasicNode<ConcreteNodeTypes.ForMarkup> {
   variableName: string;
   collection: ConcreteLavaExpression;
   reversed: 'reversed' | null;
   args: ConcreteLavaNamedArgument[];
 }
 
-export interface ConcreteLavaTagOpenTablerow
-  extends ConcreteLavaTagOpenNode<
-    NamedTags.tablerow,
-    ConcreteLavaTagForMarkup
-  > {}
+export interface ConcreteLavaTagOpenTablerow extends ConcreteLavaTagOpenNode<
+  NamedTags.tablerow,
+  ConcreteLavaTagForMarkup
+> {}
 
-export interface ConcreteLavaTagClose
-  extends ConcreteBasicLavaNode<ConcreteNodeTypes.LavaTagClose> {
+export interface ConcreteLavaTagClose extends ConcreteBasicLavaNode<ConcreteNodeTypes.LavaTagClose> {
   name: string;
 }
 
-export interface ConcreteLavaShortcode
-  extends ConcreteBasicLavaNode<ConcreteNodeTypes.LavaShortcode> {
+export interface ConcreteLavaShortcode extends ConcreteBasicLavaNode<ConcreteNodeTypes.LavaShortcode> {
   name: string;
   markup: string;
 }
 
-export interface ConcreteLavaShortcodeClose
-  extends ConcreteBasicLavaNode<ConcreteNodeTypes.LavaShortcodeClose> {
+export interface ConcreteLavaShortcodeClose extends ConcreteBasicLavaNode<ConcreteNodeTypes.LavaShortcodeClose> {
   name: string;
 }
 
@@ -288,85 +284,92 @@ export type ConcreteLavaTagNamed =
   | ConcreteLavaTagLava
   | ConcreteLavaTagWhen;
 
-export interface ConcreteLavaTagNode<Name, Markup>
-  extends ConcreteBasicLavaNode<ConcreteNodeTypes.LavaTag> {
+export interface ConcreteLavaTagNode<
+  Name,
+  Markup,
+> extends ConcreteBasicLavaNode<ConcreteNodeTypes.LavaTag> {
   markup: Markup;
   name: Name;
 }
 
-export interface ConcreteLavaTagBaseCase
-  extends ConcreteLavaTagNode<string, string> {}
-export interface ConcreteLavaTagEcho
-  extends ConcreteLavaTagNode<NamedTags.echo, ConcreteLavaVariable> {}
-export interface ConcreteLavaTagIncrement
-  extends ConcreteLavaTagNode<
-    NamedTags.increment,
-    ConcreteLavaVariableLookup
-  > {}
-export interface ConcreteLavaTagDecrement
-  extends ConcreteLavaTagNode<
-    NamedTags.decrement,
-    ConcreteLavaVariableLookup
-  > {}
-export interface ConcreteLavaTagLayout
-  extends ConcreteLavaTagNode<NamedTags.layout, ConcreteLavaExpression> {}
+export interface ConcreteLavaTagBaseCase extends ConcreteLavaTagNode<
+  string,
+  string
+> {}
+export interface ConcreteLavaTagEcho extends ConcreteLavaTagNode<
+  NamedTags.echo,
+  ConcreteLavaVariable
+> {}
+export interface ConcreteLavaTagIncrement extends ConcreteLavaTagNode<
+  NamedTags.increment,
+  ConcreteLavaVariableLookup
+> {}
+export interface ConcreteLavaTagDecrement extends ConcreteLavaTagNode<
+  NamedTags.decrement,
+  ConcreteLavaVariableLookup
+> {}
+export interface ConcreteLavaTagLayout extends ConcreteLavaTagNode<
+  NamedTags.layout,
+  ConcreteLavaExpression
+> {}
 
-export interface ConcreteLavaTagLava
-  extends ConcreteLavaTagNode<NamedTags.lava, ConcreteLavaLavaTagNode[]> {}
+export interface ConcreteLavaTagLava extends ConcreteLavaTagNode<
+  NamedTags.lava,
+  ConcreteLavaLavaTagNode[]
+> {}
 export type ConcreteLavaLavaTagNode =
   | ConcreteLavaTagOpen
   | ConcreteLavaTagClose
   | ConcreteLavaTag
   | ConcreteLavaRawTag;
 
-export interface ConcreteLavaTagAssign
-  extends ConcreteLavaTagNode<NamedTags.assign, ConcreteLavaTagAssignMarkup> {}
-export interface ConcreteLavaTagAssignMarkup
-  extends ConcreteBasicNode<ConcreteNodeTypes.AssignMarkup> {
+export interface ConcreteLavaTagAssign extends ConcreteLavaTagNode<
+  NamedTags.assign,
+  ConcreteLavaTagAssignMarkup
+> {}
+export interface ConcreteLavaTagAssignMarkup extends ConcreteBasicNode<ConcreteNodeTypes.AssignMarkup> {
   name: string;
   value: ConcreteLavaVariable;
 }
 
-export interface ConcreteLavaTagCycle
-  extends ConcreteLavaTagNode<NamedTags.cycle, ConcreteLavaTagCycleMarkup> {}
-export interface ConcreteLavaTagCycleMarkup
-  extends ConcreteBasicNode<ConcreteNodeTypes.CycleMarkup> {
+export interface ConcreteLavaTagCycle extends ConcreteLavaTagNode<
+  NamedTags.cycle,
+  ConcreteLavaTagCycleMarkup
+> {}
+export interface ConcreteLavaTagCycleMarkup extends ConcreteBasicNode<ConcreteNodeTypes.CycleMarkup> {
   groupName: ConcreteLavaExpression | null;
   args: ConcreteLavaExpression[];
 }
 
-export interface ConcreteLavaTagInclude
-  extends ConcreteLavaTagNode<NamedTags.include, ConcreteLavaTagRenderMarkup> {}
+export interface ConcreteLavaTagInclude extends ConcreteLavaTagNode<
+  NamedTags.include,
+  ConcreteLavaTagRenderMarkup
+> {}
 
-export interface ConcreteLavaTagRenderMarkup
-  extends ConcreteBasicNode<ConcreteNodeTypes.RenderMarkup> {
+export interface ConcreteLavaTagRenderMarkup extends ConcreteBasicNode<ConcreteNodeTypes.RenderMarkup> {
   snippet: ConcreteStringLiteral | ConcreteLavaVariableLookup;
   alias: string | null;
   variable: ConcreteRenderVariableExpression | null;
   args: ConcreteLavaNamedArgument[];
 }
 
-export interface ConcreteRenderVariableExpression
-  extends ConcreteBasicNode<ConcreteNodeTypes.RenderVariableExpression> {
+export interface ConcreteRenderVariableExpression extends ConcreteBasicNode<ConcreteNodeTypes.RenderVariableExpression> {
   kind: 'for' | 'with';
   name: ConcreteLavaExpression;
 }
 
-export interface ConcreteLavaDrop
-  extends ConcreteBasicLavaNode<ConcreteNodeTypes.LavaDrop> {
+export interface ConcreteLavaDrop extends ConcreteBasicLavaNode<ConcreteNodeTypes.LavaDrop> {
   markup: ConcreteLavaVariable | string;
 }
 
 // The variable is the name + filters, like shopify/lava.
-export interface ConcreteLavaVariable
-  extends ConcreteBasicNode<ConcreteNodeTypes.LavaVariable> {
+export interface ConcreteLavaVariable extends ConcreteBasicNode<ConcreteNodeTypes.LavaVariable> {
   expression: ConcreteLavaExpression;
   filters: ConcreteLavaFilter[];
   rawSource: string;
 }
 
-export interface ConcreteLavaFilter
-  extends ConcreteBasicNode<ConcreteNodeTypes.LavaFilter> {
+export interface ConcreteLavaFilter extends ConcreteBasicNode<ConcreteNodeTypes.LavaFilter> {
   name: string;
   args: ConcreteLavaArgument[];
 }
@@ -375,8 +378,7 @@ export type ConcreteLavaArgument =
   | ConcreteLavaExpression
   | ConcreteLavaNamedArgument;
 
-export interface ConcreteLavaNamedArgument
-  extends ConcreteBasicNode<ConcreteNodeTypes.NamedArgument> {
+export interface ConcreteLavaNamedArgument extends ConcreteBasicNode<ConcreteNodeTypes.NamedArgument> {
   name: string;
   value: ConcreteLavaExpression;
 }
@@ -388,31 +390,26 @@ export type ConcreteLavaExpression =
   | ConcreteLavaRange
   | ConcreteLavaVariableLookup;
 
-export interface ConcreteStringLiteral
-  extends ConcreteBasicNode<ConcreteNodeTypes.String> {
+export interface ConcreteStringLiteral extends ConcreteBasicNode<ConcreteNodeTypes.String> {
   value: string;
   single: boolean;
 }
 
-export interface ConcreteNumberLiteral
-  extends ConcreteBasicNode<ConcreteNodeTypes.Number> {
+export interface ConcreteNumberLiteral extends ConcreteBasicNode<ConcreteNodeTypes.Number> {
   value: string; // float parsing is weird but supported
 }
 
-export interface ConcreteLavaLiteral
-  extends ConcreteBasicNode<ConcreteNodeTypes.LavaLiteral> {
+export interface ConcreteLavaLiteral extends ConcreteBasicNode<ConcreteNodeTypes.LavaLiteral> {
   keyword: keyof typeof LavaLiteralValues;
   value: (typeof LavaLiteralValues)[keyof typeof LavaLiteralValues];
 }
 
-export interface ConcreteLavaRange
-  extends ConcreteBasicNode<ConcreteNodeTypes.Range> {
+export interface ConcreteLavaRange extends ConcreteBasicNode<ConcreteNodeTypes.Range> {
   start: ConcreteLavaExpression;
   end: ConcreteLavaExpression;
 }
 
-export interface ConcreteLavaVariableLookup
-  extends ConcreteBasicNode<ConcreteNodeTypes.VariableLookup> {
+export interface ConcreteLavaVariableLookup extends ConcreteBasicNode<ConcreteNodeTypes.VariableLookup> {
   name: string | null;
   lookups: ConcreteLavaExpression[];
 }
@@ -426,13 +423,11 @@ export type ConcreteHtmlNode =
   | ConcreteHtmlTagOpen
   | ConcreteHtmlTagClose;
 
-export interface ConcreteTextNode
-  extends ConcreteBasicNode<ConcreteNodeTypes.TextNode> {
+export interface ConcreteTextNode extends ConcreteBasicNode<ConcreteNodeTypes.TextNode> {
   value: string;
 }
 
-export interface ConcreteYamlFrontmatterNode
-  extends ConcreteBasicNode<ConcreteNodeTypes.YAMLFrontmatter> {
+export interface ConcreteYamlFrontmatterNode extends ConcreteBasicNode<ConcreteNodeTypes.YAMLFrontmatter> {
   body: string;
 }
 

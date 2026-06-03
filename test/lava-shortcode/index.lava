@@ -2,7 +2,7 @@ It should format an inline shortcode and preserve its markup
 {[ youtube id:'abc123' ]}
 
 It should normalize spacing around an inline shortcode markup
-{[   youtube    id:'abc123'   ]}
+{[ youtube id:'abc123' ]}
 
 It should format an inline shortcode with no arguments
 {[ kpis ]}

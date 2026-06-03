@@ -15,7 +15,7 @@
    git changelog
    ```
 
-5. Commit your changes and make a PR.
+4. Commit your changes and make a PR.
 
    ```bash
    git checkout -b "bump/v$VERSION"
@@ -25,16 +25,16 @@
    gh pr create --base="main" --head="pbassham:bump/v$VERSION"
    ```
 
-6. Merge your PR to main.
+5. Merge your PR to main.
 
-7. Push the tag
+6. Push the tag
 
    ```bash
    git tag v$VERSION
    git push origin v$VERSION
    ```
 
-8. [Create a GitHub release](https://github.com/pbassham/prettier-plugin-lava/releases/new) for the change.
+7. [Create a GitHub release](https://github.com/pbassham/prettier-plugin-lava/releases/new) for the change.
 
    ```
    git fetch origin

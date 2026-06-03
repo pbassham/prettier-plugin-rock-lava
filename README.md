@@ -11,8 +11,6 @@
     <a href="https://npmcharts.com/compare/prettier-plugin-lava?minimal=true"><img src="https://img.shields.io/npm/dm/prettier-plugin-lava.svg?sanitize=true" alt="Downloads"></a>
 </p>
 
-
-
 [Prettier](https://prettier.io) is an opinionated code formatter. It enforces a consistent style by parsing your code and re-printing it with its own rules that take the maximum line length into account, wrapping code when necessary.
 
 This plugin teaches Prettier how to format [Rock RMS](https://www.rockrms.com/) **Lava** templates (and the HTML they live in).
@@ -121,16 +119,16 @@ You can try it out in your browser in the [playground](https://shopify.github.io
 
 Prettier for Lava supports the following options.
 
-| Name                        | Default   | Description                                                                                                                                                              |
-| ------------------          | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `printWidth`                | `600`     | Changed from Prettier's default (`80`) ([see prettier docs](https://prettier.io/docs/en/options.html#print-width))                                                       |
-| `tabWidth`                  | `4`       | Changed from Prettier's default (`2`)  ([see prettier docs](https://prettier.io/docs/en/options.html#tab-width))                                                                            |
-| `useTabs`                   | `false`   | Same as in Prettier ([see prettier docs](https://prettier.io/docs/en/options.html#tabs))                                                                                 |
-| `singleQuote`               | `false`   | Same as in Prettier ([see prettier docs](https://prettier.io/docs/en/options.html#quotes))                                                                               |
-| `lavaSingleQuote`         | `true`    | Use single quotes instead of double quotes in Lava tag and objects (since v0.2.0).                                                                                     |
-| `embeddedSingleQuote`       | `true`    | Use single quotes instead of double quotes in embedded languages (JavaScript, CSS, TypeScript inside `<script>`, `<style>` or Liquid equivalent) (since v0.4.0).         |
-| `htmlWhitespaceSensitivity` | `css`     | Same as in Prettier ([see prettier docs](https://prettier.io/docs/en/options.html#html-whitespace-sensitivity))                                                          |
-| `singleLineLinkTags`        | `false`   | If set to `true`, will print `<link>` tags on a single line to remove clutter                                                                                            |
+| Name                        | Default | Description                                                                                                                                                      |
+| --------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `printWidth`                | `600`   | Changed from Prettier's default (`80`) ([see prettier docs](https://prettier.io/docs/en/options.html#print-width))                                               |
+| `tabWidth`                  | `4`     | Changed from Prettier's default (`2`) ([see prettier docs](https://prettier.io/docs/en/options.html#tab-width))                                                  |
+| `useTabs`                   | `false` | Same as in Prettier ([see prettier docs](https://prettier.io/docs/en/options.html#tabs))                                                                         |
+| `singleQuote`               | `false` | Same as in Prettier ([see prettier docs](https://prettier.io/docs/en/options.html#quotes))                                                                       |
+| `lavaSingleQuote`           | `true`  | Use single quotes instead of double quotes in Lava tag and objects (since v0.2.0).                                                                               |
+| `embeddedSingleQuote`       | `true`  | Use single quotes instead of double quotes in embedded languages (JavaScript, CSS, TypeScript inside `<script>`, `<style>` or Liquid equivalent) (since v0.4.0). |
+| `htmlWhitespaceSensitivity` | `css`   | Same as in Prettier ([see prettier docs](https://prettier.io/docs/en/options.html#html-whitespace-sensitivity))                                                  |
+| `singleLineLinkTags`        | `false` | If set to `true`, will print `<link>` tags on a single line to remove clutter                                                                                    |
 
 ## Ignoring code
 

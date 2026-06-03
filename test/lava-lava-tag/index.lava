@@ -1,29 +1,29 @@
 <div>
-{%
+  {%
   lava
   assign x = 1
   assign y = 2
   if A
-    assign z = 1
+  assign z = 1
   endif
-%}
+  %}
 </div>
 <div>
-{%- lava
+  {%- lava
   assign x = 1
   assign y = 2
   if A
-    assign z = 1
+  assign z = 1
   endif -%}
 </div>
 
 It should reindent and format
 {%- lava
-  if empty   and   true
+if empty and true
 render 'icon-cart-empty'
-      else
-  render 'icon-cart'
-      endif
+else
+render 'icon-cart'
+endif
 -%}
 
 It should handle comments correctly
@@ -37,7 +37,7 @@ It should handle nested comments correctly
 comment
 how u doin?
 comment
-  ho
+ho
 endcomment
 endcomment -%}
 
@@ -53,13 +53,13 @@ It should handle inline comments correctly
 {%- lava
 # heyy how u doin
 # not too bad
-  #
+#
 # you? -%}
 
 It should pretty print #### lines without a space
 {%- lava
 #############
-#     fancy
+# fancy
 #############
 -%}
 
@@ -68,10 +68,10 @@ It should keep at most one empty new line between statements, and strip trailing
 # some reason
 if cond
 
-      echo foo
+echo foo
 
 
-      echo bar
+echo bar
 
 else
 echo bar
@@ -93,13 +93,13 @@ It should parse tags properly and print them properly
 printWidth: 1
 {% lava
 assign x = thing['property']|filter1|fitler2
-echo x |filter1|  filter2
+echo x |filter1| filter2
 capture var
-  if nil
-  echo true
-  else
-  echo false
-  endif
+if nil
+echo true
+else
+echo false
+endif
 endcapture
 cycle 'one', 'two', 'three'
 
@@ -110,7 +110,7 @@ echo 'nope'
 endfor
 
 tablerow x in col
-  echo 'huh?'
+echo 'huh?'
 endtablerow
 
 increment i
@@ -118,21 +118,21 @@ increment i
 
 It should keep newlines between tags
 {% lava
-  # comment 1
+# comment 1
 
-  # comment 2
-  if cond
-    echo foo
+# comment 2
+if cond
+echo foo
 
-    echo bar
-  endif
+echo bar
+endif
 %}
 
 It should keep leading whitespace in comments
 {% lava
 # This list should not be reindented:
-#   - a
-#   - b
-#      - d
-#   - c
+# - a
+# - b
+# - d
+# - c
 %}

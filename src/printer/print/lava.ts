@@ -470,14 +470,7 @@ export function printLavaTag(
 
 function printLavaShortcodeStart(node: LavaShortcode): Doc {
   const markup = node.markup;
-  return group([
-    '{[',
-    ' ',
-    node.name,
-    markup ? ` ${markup}` : '',
-    ' ',
-    ']}',
-  ]);
+  return group(['{[', ' ', node.name, markup ? ` ${markup}` : '', ' ', ']}']);
 }
 
 export function printLavaShortcode(

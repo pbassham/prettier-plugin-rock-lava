@@ -20,8 +20,7 @@
       return script;
     }
 
-    const unpkgUrl =
-      'https://www.unpkg.com/prettier-plugin-lava/standalone.js';
+    const unpkgUrl = 'https://www.unpkg.com/prettier-plugin-lava/standalone.js';
     if (/localhost|127.0.0.1/.test(window.location.href)) {
       const script = getScript('assets/standalone.js');
       script.onerror = () => {
@@ -44,8 +43,7 @@
       <img
         class="logo"
         src="https://github.com/Shopify/theme-check-vscode/blob/main/images/shopify_glyph.png?raw=true"
-        alt=""
-      />
+        alt="" />
       <h1>
         Prettier Plugin Lava
         <span id="version"
@@ -84,19 +82,16 @@
                 min="0"
                 max="600"
                 step="10"
-                value="600"
-              />
+                value="600" />
               <input
                 id="printWidthNumber"
                 type="number"
                 min="0"
                 step="10"
-                value="600"
-              />
+                value="600" />
             </label>
             <label
-              title="How meaningful whitespace is handled between HTML nodes"
-            >
+              title="How meaningful whitespace is handled between HTML nodes">
               --html-whitespace-sensitivity
               <select id="htmlWhitespaceSensitivity">
                 <option value="css">css</option>
@@ -118,8 +113,7 @@
         id="input"
         class="editor"
         placeholder="Unformatted input"
-        spellcheck="false"
-      >
+        spellcheck="false">
 &lt;ul&gt;{% for el in col %}&lt;li class=&quot;{% cycle &#039;odd&#039;, &#039;even&#039; %}&quot; id=&quot;el-{{ el.index }}&quot;&gt;{{ el.image }}&lt;/li&gt;{% endfor %}&lt;/ul&gt;
 
 &lt;ul class=&quot;container&quot;&gt;
@@ -136,8 +130,7 @@
           id="output"
           class="editor"
           placeholder="Prettified output"
-          readonly
-        ></textarea>
+          readonly></textarea>
         <div id="rulers" class="rulers">
           <div id="ruler" class="ruler"></div>
         </div>
@@ -157,8 +150,7 @@
         id="reportIssue"
         href="https://github.com/pbassham/prettier-plugin-lava/issues/new"
         target="_blank"
-        rel="noopener noreferrer"
-      >
+        rel="noopener noreferrer">
         <button type="button" class="btn">Report issue</button>
       </a>
     </div>
