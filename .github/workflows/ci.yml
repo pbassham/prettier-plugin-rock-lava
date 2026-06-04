@@ -3,8 +3,9 @@ name: CI
 
 on:
   push:
-    # Don't run CI for tag pushes (releases) — the branch push already covers it
-    tags-ignore:
+    # Run on all branch pushes, but not on tag pushes (releases).
+    # A branches filter naturally excludes tags, since tags never match it.
+    branches:
       - "**"
 
 jobs:
