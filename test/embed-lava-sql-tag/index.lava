@@ -1,0 +1,14 @@
+It should pretty print SQL inside sql tags
+{% sql %}
+SELECT [NickName], [LastName] FROM [Person] WHERE [LastName] = 'Decker'
+{% endsql %}
+
+It should keep the sql command arguments
+{% sql return:'mylist' %}
+SELECT [NickName], [LastName] FROM [Person] WHERE [LastName] = 'Decker'
+{% endsql %}
+
+It should fallback to reindenting when the sql contains Lava
+{% sql %}
+SELECT [NickName] FROM [Person] WHERE [LastName] = '{{ lastName }}'
+{% endsql %}

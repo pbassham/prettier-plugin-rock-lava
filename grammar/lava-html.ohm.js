@@ -185,6 +185,7 @@ Lava <: Helpers {
     | lavaRawTagImpl<"javascript">
     | lavaRawTagImpl<"stylesheet">
     | lavaRawTagImpl<"style">
+    | lavaRawTagImpl<"sql">
   lavaRawTagImpl<name> =
     "{%" "-"? space* (name endOfIdentifier) space* tagMarkup "-"? "%}"
     anyExceptStar<lavaRawTagClose<name>>
@@ -544,7 +545,6 @@ Lava <: Helpers {
     | "page"
     | "site"
     | "step"
-    | "sql"
     | "tag"
     // Base blocks
     | "capture"

@@ -493,6 +493,7 @@ export enum RawMarkupKinds {
   json = 'json',
   markdown = 'markdown',
   typescript = 'typescript',
+  sql = 'sql',
   text = 'text',
 }
 
@@ -1439,6 +1440,11 @@ function toRawMarkupKindFromLavaNode(node: ConcreteLavaRawTag): RawMarkupKinds {
         return RawMarkupKinds.text;
       }
       return RawMarkupKinds.css;
+    case 'sql':
+      if (lavaToken.test(node.body)) {
+        return RawMarkupKinds.text;
+      }
+      return RawMarkupKinds.sql;
     default:
       return RawMarkupKinds.text;
   }
