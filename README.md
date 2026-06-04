@@ -15,9 +15,10 @@
 
 This plugin teaches Prettier how to format [Rock RMS](https://www.rockrms.com/) **Lava** templates (and the HTML they live in).
 
-## Can this be used in production?
+## Status
 
-Soon? Yes. Right now? No. We're still working on it. We're looking for feedback on the plugin. If you have any feedback, please open an issue.
+This plugin is published on npm and usable today. It's still evolving, so if you
+hit a formatting bug or have a suggestion, please [open an issue](https://github.com/pbassham/prettier-plugin-rock-lava/issues).
 
 ## Installation
 
