@@ -1,8 +1,7 @@
-import { SupportLanguage, SupportOptions, version } from 'prettier';
-import type { Plugin as Plugin2 } from 'prettier';
-import type { Plugin as Plugin3 } from 'prettier3';
+import { SupportLanguage, SupportOptions } from 'prettier';
+import type { Plugin } from 'prettier';
 import { parsers, lavaHtmlLanguageName } from '~/parser';
-import { printers2, printers3 } from '~/printer';
+import { printers } from '~/printer';
 import { LavaHtmlNode } from '~/types';
 
 const languages: SupportLanguage[] = [
@@ -45,22 +44,12 @@ const defaultOptions = {
   tabWidth: 4,
 };
 
-const plugin2: Plugin2<LavaHtmlNode> = {
+const plugin: Plugin<LavaHtmlNode> = {
   languages,
-  parsers: parsers as Plugin2['parsers'],
-  printers: printers2,
+  parsers: parsers as Plugin['parsers'],
+  printers: printers as any,
   options,
   defaultOptions,
 };
 
-const plugin3: Plugin3<LavaHtmlNode> = {
-  languages,
-  parsers: parsers as Plugin3['parsers'],
-  printers: printers3 as any,
-  options,
-  defaultOptions,
-};
-
-const prettierMajor = version.split('.')[0]!;
-
-export = prettierMajor === '2' ? plugin2 : plugin3;
+export = plugin;

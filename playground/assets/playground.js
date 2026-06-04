@@ -52,9 +52,9 @@ selectInputs.forEach((input) => {
   });
 });
 
-function format() {
+async function format() {
   try {
-    output.value = prettier.format(input.value, {
+    output.value = await prettier.format(input.value, {
       ...options,
       plugins: prettierPlugins,
       parser: 'lava-html',

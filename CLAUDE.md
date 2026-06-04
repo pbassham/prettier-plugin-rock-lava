@@ -77,11 +77,8 @@ bun install
 # Build (shims → grammar, TS compile, standalone bundle)
 bun run build
 
-# Run the test suite (Prettier 2 by default)
+# Run the test suite
 bun run test
-
-# Run tests against Prettier 3
-bun run test:3
 
 # Idempotence tests
 bun run test:idempotence
@@ -107,7 +104,7 @@ everything consistent.
   embedded-language `RawMarkupKinds`.
 - `src/printer/` — Prettier `Doc` printing. `printer-lava-html.ts` is the entry
   point; `print/lava.ts` handles Lava tags; `embed.ts` handles embedded languages
-  (supports both Prettier 2 `embed2` and Prettier 3 `embed3` APIs).
+  (Prettier 3 `embed` API).
 - Tests live under `test/<feature>/` and `src/**/*.spec.ts`.
 
 ## Conventions
@@ -117,5 +114,4 @@ everything consistent.
   is flat and pairing happens in stage 2). Keep the list explicit.
 - Inline/unknown tags fall through to a generic base-case printer and work
   without grammar changes.
-- The plugin supports both Prettier 2 and 3; changes to printing must keep both
-  `embed2` and `embed3` paths working.
+- The plugin targets Prettier 3 only (the async `embed` API).

@@ -1,16 +1,11 @@
 import { Doc } from 'prettier';
-import type { AstPath as AstPath2 } from 'prettier';
 import type {
   AstPath as AstPath3,
   ParserOptions as ParserOptions3,
-} from 'prettier3';
+} from 'prettier';
 import * as AST from '~/parser/stage-2-ast';
 
-export type CommonKeys<T1, T2> = Extract<keyof T1, keyof T2>;
-export type AstPath<T = any> = Pick<
-  AstPath2<T>,
-  CommonKeys<AstPath2<T>, AstPath3<T>>
->;
+export type AstPath<T = any> = AstPath3<T>;
 export type ParserOptions<T = any> = ParserOptions3<T>;
 
 export interface Position {
