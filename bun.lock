@@ -3,7 +3,7 @@
   "configVersion": 0,
   "workspaces": {
     "": {
-      "name": "prettier-plugin-lava",
+      "name": "prettier-plugin-rock-lava",
       "dependencies": {
         "html-styles": "^1.0.0",
         "line-column": "^1.0.2",
@@ -37,9 +37,6 @@
       "peerDependencies": {
         "prettier": "^2.0.0 || ^3.0.0",
       },
-      "optionalPeers": [
-        "prettier",
-      ],
     },
   },
   "packages": {
@@ -556,6 +553,8 @@
     "pkg-dir": ["pkg-dir@4.2.0", "", { "dependencies": { "find-up": "^4.0.0" } }, "sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ=="],
 
     "plimit-lit": ["plimit-lit@1.2.6", "", { "dependencies": { "queue-lit": "^1.2.7" } }, "sha512-EuVnKyDeFgr58aidKf2G7DI41r23bxphlvBKAZ8e8dT9of0Ez2g9w6JbJGUP1YBNC2yG9+ZCCbjLj4yS1P5Gzw=="],
+
+    "prettier": ["prettier@3.0.0", "", { "bin": { "prettier": "bin/prettier.cjs" } }, "sha512-zBf5eHpwHOGPC47h0zrPyNn+eAEIdEzfywMoYn2XPi0P44Zp0tSq64rq0xAREh4auw2cJZHo9QUob+NqCQky4g=="],
 
     "prettier2": ["prettier@2.8.8", "", { "bin": { "prettier": "bin-prettier.js" } }, "sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q=="],
 
