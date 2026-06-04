@@ -223,10 +223,8 @@ export interface LavaTagNode<Name, Markup> extends ASTNode<NodeTypes.LavaTag> {
 }
 
 export interface LavaTagBaseCase extends LavaTagNode<string, string> {}
-export interface LavaTagEcho extends LavaTagNode<
-  NamedTags.echo,
-  LavaVariable
-> {}
+export interface LavaTagEcho
+  extends LavaTagNode<NamedTags.echo, LavaVariable> {}
 
 /**
  * Rock shortcode: `{[ name ... ]}` (inline) or
@@ -245,46 +243,32 @@ export interface LavaShortcode extends ASTNode<NodeTypes.LavaShortcode> {
   blockStartPosition: Position;
   blockEndPosition?: Position;
 }
-export interface LavaTagAssign extends LavaTagNode<
-  NamedTags.assign,
-  AssignMarkup
-> {}
+export interface LavaTagAssign
+  extends LavaTagNode<NamedTags.assign, AssignMarkup> {}
 export interface AssignMarkup extends ASTNode<NodeTypes.AssignMarkup> {
   name: string;
   value: LavaVariable;
 }
 
-export interface LavaTagIncrement extends LavaTagNode<
-  NamedTags.increment,
-  LavaVariableLookup
-> {}
-export interface LavaTagDecrement extends LavaTagNode<
-  NamedTags.decrement,
-  LavaVariableLookup
-> {}
+export interface LavaTagIncrement
+  extends LavaTagNode<NamedTags.increment, LavaVariableLookup> {}
+export interface LavaTagDecrement
+  extends LavaTagNode<NamedTags.decrement, LavaVariableLookup> {}
 
-export interface LavaTagCapture extends LavaTagNode<
-  NamedTags.capture,
-  LavaVariableLookup
-> {}
+export interface LavaTagCapture
+  extends LavaTagNode<NamedTags.capture, LavaVariableLookup> {}
 
-export interface LavaTagCycle extends LavaTagNode<
-  NamedTags.cycle,
-  CycleMarkup
-> {}
+export interface LavaTagCycle
+  extends LavaTagNode<NamedTags.cycle, CycleMarkup> {}
 export interface CycleMarkup extends ASTNode<NodeTypes.CycleMarkup> {
   groupName: LavaExpression | null;
   args: LavaExpression[];
 }
 
-export interface LavaTagCase extends LavaTagNode<
-  NamedTags.case,
-  LavaExpression
-> {}
-export interface LavaBranchWhen extends LavaBranchNode<
-  NamedTags.when,
-  LavaExpression[]
-> {}
+export interface LavaTagCase
+  extends LavaTagNode<NamedTags.case, LavaExpression> {}
+export interface LavaBranchWhen
+  extends LavaBranchNode<NamedTags.when, LavaExpression[]> {}
 
 export interface LavaTagFor extends LavaTagNode<NamedTags.for, ForMarkup> {}
 export interface ForMarkup extends ASTNode<NodeTypes.ForMarkup> {
@@ -294,28 +278,23 @@ export interface ForMarkup extends ASTNode<NodeTypes.ForMarkup> {
   args: LavaNamedArgument[];
 }
 
-export interface LavaTagTablerow extends LavaTagNode<
-  NamedTags.tablerow,
-  ForMarkup
-> {}
+export interface LavaTagTablerow
+  extends LavaTagNode<NamedTags.tablerow, ForMarkup> {}
 
 export interface LavaTagIf extends LavaTagConditional<NamedTags.if> {}
 export interface LavaTagUnless extends LavaTagConditional<NamedTags.unless> {}
-export interface LavaBranchElseif extends LavaBranchNode<
-  NamedTags.elseif,
-  LavaConditionalExpression
-> {}
-export interface LavaTagConditional<Name> extends LavaTagNode<
-  Name,
-  LavaConditionalExpression
-> {}
+export interface LavaBranchElseif
+  extends LavaBranchNode<NamedTags.elseif, LavaConditionalExpression> {}
+export interface LavaTagConditional<Name>
+  extends LavaTagNode<Name, LavaConditionalExpression> {}
 
 export type LavaConditionalExpression =
   | LavaLogicalExpression
   | LavaComparison
   | LavaExpression;
 
-export interface LavaLogicalExpression extends ASTNode<NodeTypes.LogicalExpression> {
+export interface LavaLogicalExpression
+  extends ASTNode<NodeTypes.LogicalExpression> {
   relation: 'and' | 'or';
   left: LavaConditionalExpression;
   right: LavaConditionalExpression;
@@ -327,20 +306,14 @@ export interface LavaComparison extends ASTNode<NodeTypes.Comparison> {
   right: LavaConditionalExpression;
 }
 
-export interface LavaTagInclude extends LavaTagNode<
-  NamedTags.include,
-  RenderMarkup
-> {}
+export interface LavaTagInclude
+  extends LavaTagNode<NamedTags.include, RenderMarkup> {}
 
-export interface LavaTagLayout extends LavaTagNode<
-  NamedTags.layout,
-  LavaExpression
-> {}
+export interface LavaTagLayout
+  extends LavaTagNode<NamedTags.layout, LavaExpression> {}
 
-export interface LavaTagLava extends LavaTagNode<
-  NamedTags.lava,
-  LavaStatement[]
-> {}
+export interface LavaTagLava
+  extends LavaTagNode<NamedTags.lava, LavaStatement[]> {}
 
 export interface RenderMarkup extends ASTNode<NodeTypes.RenderMarkup> {
   snippet: LavaString | LavaVariableLookup;
@@ -349,7 +322,8 @@ export interface RenderMarkup extends ASTNode<NodeTypes.RenderMarkup> {
   args: LavaNamedArgument[];
 }
 
-export interface RenderVariableExpression extends ASTNode<NodeTypes.RenderVariableExpression> {
+export interface RenderVariableExpression
+  extends ASTNode<NodeTypes.RenderVariableExpression> {
   kind: 'for' | 'with';
   name: LavaExpression;
 }
@@ -456,16 +430,19 @@ export interface HtmlElement extends HtmlNodeBase<NodeTypes.HtmlElement> {
   blockEndPosition: Position;
 }
 
-export interface HtmlDanglingMarkerOpen extends HtmlNodeBase<NodeTypes.HtmlDanglingMarkerOpen> {
+export interface HtmlDanglingMarkerOpen
+  extends HtmlNodeBase<NodeTypes.HtmlDanglingMarkerOpen> {
   name: (TextNode | LavaDrop)[];
 }
 
-export interface HtmlDanglingMarkerClose extends ASTNode<NodeTypes.HtmlDanglingMarkerClose> {
+export interface HtmlDanglingMarkerClose
+  extends ASTNode<NodeTypes.HtmlDanglingMarkerClose> {
   name: (TextNode | LavaDrop)[];
   blockStartPosition: Position;
 }
 
-export interface HtmlSelfClosingElement extends HtmlNodeBase<NodeTypes.HtmlSelfClosingElement> {
+export interface HtmlSelfClosingElement
+  extends HtmlNodeBase<NodeTypes.HtmlSelfClosingElement> {
   /**
    * The name of the tag can be compound
    * @example <{{ header_type }}--header />
@@ -473,7 +450,8 @@ export interface HtmlSelfClosingElement extends HtmlNodeBase<NodeTypes.HtmlSelfC
   name: (TextNode | LavaDrop)[];
 }
 
-export interface HtmlVoidElement extends HtmlNodeBase<NodeTypes.HtmlVoidElement> {
+export interface HtmlVoidElement
+  extends HtmlNodeBase<NodeTypes.HtmlVoidElement> {
   name: string;
 }
 
@@ -522,9 +500,12 @@ export type AttributeNode =
   | AttrUnquoted
   | AttrEmpty;
 
-export interface AttrSingleQuoted extends AttributeNodeBase<NodeTypes.AttrSingleQuoted> {}
-export interface AttrDoubleQuoted extends AttributeNodeBase<NodeTypes.AttrDoubleQuoted> {}
-export interface AttrUnquoted extends AttributeNodeBase<NodeTypes.AttrUnquoted> {}
+export interface AttrSingleQuoted
+  extends AttributeNodeBase<NodeTypes.AttrSingleQuoted> {}
+export interface AttrDoubleQuoted
+  extends AttributeNodeBase<NodeTypes.AttrDoubleQuoted> {}
+export interface AttrUnquoted
+  extends AttributeNodeBase<NodeTypes.AttrUnquoted> {}
 export interface AttrEmpty extends ASTNode<NodeTypes.AttrEmpty> {
   name: (TextNode | LavaDrop)[];
 }
