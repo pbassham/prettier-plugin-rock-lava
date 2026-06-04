@@ -1,138 +1,190 @@
 <div>
   {% lava
-  assign x = 1
-  assign y = 2
-  if A
-  assign z = 1
-  endif
+    assign x = 1
+    assign y = 2
+    if A
+      assign z = 1
+    endif
   %}
 </div>
 <div>
   {%- lava
-  assign x = 1
-  assign y = 2
-  if A
-  assign z = 1
-  endif
+    assign x = 1
+    assign y = 2
+    if A
+      assign z = 1
+    endif
   -%}
 </div>
 
 It should reindent and format
 {%- lava
-if empty and true
-render 'icon-cart-empty'
-else
-render 'icon-cart'
-endif
+  if empty and true
+    render 'icon-cart-empty'
+  else
+    render 'icon-cart'
+  endif
 -%}
 
 It should handle comments correctly
 {%- lava
-comment
-how u doin?
-endcomment
+  comment
+    how u doin?
+  endcomment
 -%}
 
 It should handle nested comments correctly
 {%- lava
-comment
-how u doin?
-comment
-ho
-endcomment
-endcomment
+  comment
+    how u doin?
+    comment
+    ho
+    endcomment
+  endcomment
 -%}
 
 It should handle empty nested comments correctly
 {%- lava
-comment
-how u doin?
-comment
-endcomment
-endcomment
+  comment
+    how u doin?
+    comment
+    endcomment
+  endcomment
 -%}
 
-It should handle inline comments correctly
+It should convert invalid # inline comments to //- at the top level
 {%- lava
-# heyy how u doin
-# not too bad
-#
-# you?
+  //- heyy how u doin
+  //- not too bad
+  //-
+  //- you?
 -%}
 
-It should pretty print #### lines without a space
+It should convert decorative # lines to //- (# is invalid in Rock)
 {%- lava
-#############
-# fancy
-#############
+  //- ############
+  //- fancy
+  //- ############
 -%}
 
 It should keep at most one empty new line between statements, and strip trailing
 {% lava
-# some reason
-if cond
-echo foo
+  //- some reason
+  if cond
+    echo foo
 
-echo bar
+    echo bar
 
-else
-echo bar
-endif
+  else
+    echo bar
+  endif
 
-# some other block
-case foo
-when bar, baz
-echo 'hi'
+  //- some other block
+  case foo
+    when bar or baz
+      echo 'hi'
 
-else
-echo 'no'
-endcase
+    else
+      echo 'no'
+  endcase
 %}
 
 It should parse tags properly and print them properly
 printWidth: 1
 {% lava
-assign x = thing.property | filter1 | fitler2
-echo x | filter1 | filter2
-capture var
-if null
-echo true
-else
-echo false
-endif
-endcapture
-cycle 'one', 'two', 'three'
+  assign x = thing.property | filter1 | fitler2
+  echo x | filter1 | filter2
+  capture var
+    if null
+      echo true
+    else
+      echo false
+    endif
+  endcapture
+  cycle 'one', 'two', 'three'
 
-for x in col reversed limit:10
-echo x
-else
-echo 'nope'
-endfor
+  for x in col reversed limit:10
+    echo x
+  else
+    echo 'nope'
+  endfor
 
-tablerow x in col
-echo 'huh?'
-endtablerow
+  tablerow x in col
+    echo 'huh?'
+  endtablerow
 
-increment i
+  increment i
 %}
 
 It should keep newlines between tags
 {% lava
-# comment 1
+  //- comment 1
 
-# comment 2
-if cond
-echo foo
+  //- comment 2
+  if cond
+    echo foo
 
-echo bar
-endif
+    echo bar
+  endif
 %}
 
 It should keep leading whitespace in comments
 {% lava
-# This list should not be reindented:
-# - a
-# - b
-# - d
-# - c
+  //- This list should not be reindented:
+  //- - a
+  //- - b
+  //- - d
+  //- - c
+%}
+
+It should nest a bare comment/endcomment block inside an if (Rock rejects //- and /- -/ inside a lava tag)
+{% lava
+  if condition
+    comment
+      This is a comment inside an if block.
+    endcomment
+    echo something
+  endif
+%}
+
+It should preserve //- and /- -/ comments at the top level of a lava tag
+{% lava
+  //- a line comment
+  /-
+    a block
+    comment
+  -/
+  echo 'Hello World'
+%}
+
+It should convert top-level # to //- but keep //- and /- -/ as-is
+{% lava
+  //- convert me
+  //- keep me
+  /-
+    keep me too
+  -/
+%}
+
+It should convert //- and /- -/ to comment/endcomment inside any nested block
+{% lava
+  if cond
+    comment
+      dash line becomes comment block
+    endcomment
+    comment
+      dash block becomes comment block
+    endcomment
+    echo 'foo'
+  endif
+%}
+
+It should convert # to comment/endcomment inside a nested block
+{% lava
+  for x in col
+    comment
+      this hash becomes a comment block
+    endcomment
+    echo x
+  endfor
 %}

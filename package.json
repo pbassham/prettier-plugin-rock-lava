@@ -36,6 +36,8 @@
     "format": "scripts/relative-to-alias && prettier --write --ignore-unknown \"{src,test}/**/*.ts\"",
     "format:check": "prettier --check --ignore-unknown \"{src,test}/**/*.ts\"",
     "playground": "npx http-server playground",
+    "preview": "node -r ./build/shims -r ts-node/register/transpile-only -r tsconfig-paths/register scripts/preview.ts",
+    "bless": "node -r ./build/shims -r ts-node/register/transpile-only -r tsconfig-paths/register scripts/bless.ts",
     "prepare": "husky install",
     "prerelease": "scripts/prerelease",
     "prettier": "scripts/prettier",

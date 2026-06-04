@@ -580,10 +580,12 @@ LavaStatement <: Lava {
 
   LavaStatement =
     | lavaBlockComment
+    | lavaInlineDashComment
     | lavaRawTag
     | lavaTagClose
     | lavaTagOpen
     | lavaTag
+    | lavaLineComment
     | lavaInlineComment
 
   lavaTagOpenRule<name, markup>
@@ -623,6 +625,13 @@ LavaStatement <: Lava {
 
   lavaInlineComment
     := "#" space? tagMarkup &lavaStatementEnd
+
+  // Rock dash comments inside a {% lava %} tag.
+  // Line: `//- ...` to end of line. Block: `/- ... -/` spanning lines.
+  lavaLineComment
+    = "//-" space? tagMarkup &lavaStatementEnd
+  lavaInlineDashComment
+    = "/-" anyExceptStar<"-/"> "-/" space* &lavaStatementEnd
 
   tagMarkup := anyExceptStar<lavaStatementEnd>
 

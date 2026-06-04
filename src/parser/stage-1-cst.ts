@@ -1051,6 +1051,43 @@ function toCST<T>(
       locEnd: locEndSecondToLast,
       source,
     },
+
+    // Rock `//-` line comment inside a lava tag. Modeled like the `#` inline
+    // comment (a LavaTag), but with name `//-` so the printer/preprocess can
+    // tell them apart.
+    lavaLineComment: {
+      type: ConcreteNodeTypes.LavaTag,
+      name: 0,
+      markup: markupTrimEnd(2),
+      whitespaceStart: null,
+      whitespaceEnd: null,
+      locStart,
+      locEnd: locEndSecondToLast,
+      source,
+    },
+
+    // Rock `/- ... -/` block comment inside a lava tag. Modeled like the
+    // `comment`/`endcomment` block (a LavaRawTag), with name `/-`.
+    lavaInlineDashComment: {
+      type: ConcreteNodeTypes.LavaRawTag,
+      name: '/-',
+      body: 1,
+      whitespaceStart: '',
+      whitespaceEnd: '',
+      delimiterWhitespaceStart: '',
+      delimiterWhitespaceEnd: '',
+      locStart,
+      locEnd: (tokens: Node[]) => lavaStatementOffset + tokens[2].source.endIdx,
+      source,
+      blockStartLocStart: (tokens: Node[]) =>
+        lavaStatementOffset + tokens[0].source.startIdx,
+      blockStartLocEnd: (tokens: Node[]) =>
+        lavaStatementOffset + tokens[0].source.endIdx,
+      blockEndLocStart: (tokens: Node[]) =>
+        lavaStatementOffset + tokens[2].source.startIdx,
+      blockEndLocEnd: (tokens: Node[]) =>
+        lavaStatementOffset + tokens[2].source.endIdx,
+    },
   };
 
   const LavaHTMLMappings: Mapping = {

@@ -49,14 +49,14 @@ comment
 endcomment
 endcomment -%}
 
-It should handle inline comments correctly
+It should convert invalid # inline comments to //- at the top level
 {%- lava
 # heyy how u doin
 # not too bad
 #
 # you? -%}
 
-It should pretty print #### lines without a space
+It should convert decorative # lines to //- (# is invalid in Rock)
 {%- lava
 #############
 # fancy
@@ -135,4 +135,52 @@ It should keep leading whitespace in comments
 # - b
 # - d
 # - c
+%}
+
+It should nest a bare comment/endcomment block inside an if (Rock rejects //- and /- -/ inside a lava tag)
+{% lava
+if condition
+comment
+This is a comment inside an if block.
+endcomment
+echo something
+endif
+%}
+
+It should preserve //- and /- -/ comments at the top level of a lava tag
+{% lava
+//- a line comment
+/-
+a block
+comment
+-/
+echo 'Hello World'
+%}
+
+It should convert top-level # to //- but keep //- and /- -/ as-is
+{% lava
+# convert me
+//- keep me
+/-
+keep me too
+-/
+%}
+
+It should convert //- and /- -/ to comment/endcomment inside any nested block
+{% lava
+if cond
+//- dash line becomes comment block
+/-
+dash block becomes comment block
+-/
+echo 'foo'
+endif
+%}
+
+It should convert # to comment/endcomment inside a nested block
+{% lava
+for x in col
+# this hash becomes a comment block
+echo x
+endfor
 %}

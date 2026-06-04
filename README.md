@@ -115,9 +115,16 @@ use a different extension, add:
 ### VS Code setup
 
 Install the [Prettier extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode),
-then configure it.
+then configure it for whichever scope suits you — a single project, a whole
+workspace, or a VS Code **profile**. In all cases the Prettier extension
+resolves the plugin from the `plugins` entry in the `.prettierrc` it loads, so
+the same config powers both the CLI and the editor.
 
-For a **per-project** install, add to the repo's `.vscode/settings.json`:
+#### Per-project (the repo has its own Prettier config)
+
+If the Lava project is a JS project (or you don't mind a `node_modules`), install
+the plugin locally and add a project `.prettierrc` with a `plugins` entry. Then
+add to the repo's `.vscode/settings.json`:
 
 ```json
 {
@@ -132,12 +139,19 @@ For a **per-project** install, add to the repo's `.vscode/settings.json`:
 }
 ```
 
-For the **global** setup above, add this to your **User** `settings.json`
-instead:
+Prettier finds the project's `.prettierrc` by walking up from each file, so no
+`prettier.configPath` is needed here.
+
+#### Workspace / global (using the shared `~/.prettierrc.json` from above)
+
+When you rely on the global `~/.prettierrc.json` (the [Global setup](#global-setup-no-per-project-node_modules)),
+point the extension at it with `prettier.configPath`. Put this in a workspace
+`.vscode/settings.json` to scope it to one project, or in your **User**
+`settings.json` to apply everywhere:
 
 ```json
 {
-  "prettier.configPath": "/Users/<you>/.prettierrc.json",
+  "prettier.configPath": "~/.prettierrc.json",
   "prettier.resolveGlobalModules": true,
   "prettier.documentSelectors": ["**/*.lava"],
   "[lava]": {
@@ -147,8 +161,54 @@ instead:
 }
 ```
 
-The Prettier extension resolves the plugin from the `plugins` entry in your
-`.prettierrc`, so the same configuration powers both the CLI and the editor.
+> **Use the `~/` form, not an absolute path.** Prettier auto-discovers
+> `~/.prettierrc.json` for any *saved* file under your home directory, so saved
+> `.lava` files format either way. But **new, unsaved (untitled) files have no
+> path on disk**, and the extension can only resolve `configPath` for them when
+> it starts with `~` on macOS — an absolute path is silently dropped for
+> untitled docs. Writing `~/.prettierrc.json` makes new files set to the Lava
+> language mode format too.
+>
+> Setting `prettier.configPath` at the **User** level forces that one config for
+> *every* project (it overrides each project's own `.prettierrc`). If you also
+> work in non-Lava projects, prefer the workspace or profile scope below.
+
+#### VS Code profile
+
+A [VS Code profile](https://code.visualstudio.com/docs/editor/profiles) is the
+cleanest way to enable this only when you want it: the settings apply when the
+profile is active and leave no global footprint otherwise. Create (or open) a
+"Rock Lava" profile, then add the same block as above to **that profile's**
+`settings.json` (Command Palette → _Preferences: Open Settings (JSON)_ while the
+profile is active):
+
+```json
+{
+  "prettier.configPath": "~/.prettierrc.json",
+  "prettier.resolveGlobalModules": true,
+  "prettier.documentSelectors": ["**/*.lava"],
+  "[lava]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  }
+}
+```
+
+#### Untitled / brand-new files
+
+If a freshly created untitled file (language mode set to Lava, never saved)
+shows _"Prettier … is configured as formatter but it cannot format
+'Lava'-files,"_ that's a registration quirk in the Prettier extension — at
+startup it only registers its built-in languages, and it adds `lava` only after
+it has loaded the plugin config for a **saved file in an open workspace folder**
+(untitled docs don't trigger this). To work around it, once per window:
+
+- open a workspace **folder** (not just loose files), and
+- click into any **saved** file once (a `.lava` file is ideal) — this registers
+  `lava` for the rest of the session, after which untitled Lava files format.
+
+Saving the scratch file as `something.lava` also formats it immediately, since
+it then has a path on disk.
 
 <!-- ## Playground
 

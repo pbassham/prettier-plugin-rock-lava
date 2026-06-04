@@ -150,7 +150,10 @@ function printNamedLavaBlockStart(
       ' ',
       indent([
         join(
-          [',', line],
+          // Rock Lava documents `or` (not a comma) as the separator between
+          // `when` values, e.g. `{% when 'a' or 'b' %}`. Break before `or` so
+          // long lists stack like the `if` tag's logical operators.
+          [line, 'or '],
           path.map((p) => print(p, args), 'markup'),
         ),
       ]),
@@ -252,6 +255,35 @@ function printNamedLavaBlockStart(
   }
 }
 
+/**
+ * Determines a comment node's position relative to an enclosing {% lava %} tag:
+ *   'lava-top'    – a direct child of the lava tag (valid: //- and /- -/)
+ *   'lava-nested' – inside a block (if/unless/case/for/...) within a lava tag,
+ *                   where Rock only accepts comment/endcomment
+ *   'outside'     – not inside a lava tag at all
+ */
+function lavaCommentContext(
+  path: AstPath<any>,
+): 'lava-top' | 'lava-nested' | 'outside' {
+  let depth = 0;
+  let nested = false;
+  let parent = path.getParentNode(depth);
+  while (parent) {
+    if (parent.type === NodeTypes.LavaTag && parent.name === 'lava') {
+      return nested ? 'lava-nested' : 'lava-top';
+    }
+    if (
+      parent.type === NodeTypes.LavaTag ||
+      parent.type === NodeTypes.LavaBranch
+    ) {
+      nested = true;
+    }
+    depth += 1;
+    parent = path.getParentNode(depth);
+  }
+  return 'outside';
+}
+
 function printLavaStatement(
   path: AstPath<Extract<LavaTag, { name: string; markup: string }>>,
   _options: LavaParserOptions,
@@ -259,6 +291,31 @@ function printLavaStatement(
   _args: LavaPrinterArgs,
 ): Doc {
   const node = path.getValue();
+
+  // Rock comment quirks inside a {% lava %} tag. `#` is never valid Rock Lava;
+  // `//-` is valid at the top level but not inside a block. See
+  // lavaCommentContext above.
+  const isLineComment = node.name === '#' || node.name === '//-';
+  if (isLineComment) {
+    const context = lavaCommentContext(path);
+    const text = node.markup.trim();
+    if (context === 'lava-nested') {
+      // Convert to a comment/endcomment block (the only form Rock accepts in a
+      // block within a lava tag).
+      return [
+        'comment',
+        text === '' ? '' : indent([hardline, text]),
+        hardline,
+        'endcomment',
+      ];
+    }
+    if (context === 'lava-top') {
+      // `#` is invalid in Rock; normalize every top-level line comment to `//-`.
+      return doc.utils.removeLines(['//-', text === '' ? '' : ' ', text]);
+    }
+    // 'outside': leave the inline comment untouched (handled in a later pass).
+  }
+
   const shouldSkipLeadingSpace =
     node.markup.trim() === '' ||
     (node.name === '#' && node.markup.startsWith('#'));
@@ -533,8 +590,15 @@ export function printLavaRawTag(
       node.body.position.start,
       node.body.position.end,
     );
+  // Rock `/- ... -/` block comment (only occurs inside a {% lava %} tag): its
+  // delimiters are `/-` and `-/`, not the `name`/`endname` pattern. Inside a
+  // block within the lava tag, Rock only accepts comment/endcomment, so convert.
+  const isDashComment = node.name === '/-';
+  const convertDashToComment =
+    isDashComment && lavaCommentContext(path) === 'lava-nested';
+  const effectiveName = convertDashToComment ? 'comment' : node.name;
   const blockStart = isLavaStatement
-    ? [node.name]
+    ? [effectiveName]
     : group([
         '{%',
         node.whitespaceStart,
@@ -545,18 +609,21 @@ export function printLavaRawTag(
         node.whitespaceEnd,
         '%}',
       ]);
-  const blockEnd = isLavaStatement
-    ? ['end', node.name]
-    : [
-        '{%',
-        node.whitespaceStart,
-        ' ',
-        'end',
-        node.name,
-        ' ',
-        node.whitespaceEnd,
-        '%}',
-      ];
+  const blockEnd =
+    isDashComment && !convertDashToComment
+      ? ['-/']
+      : isLavaStatement
+      ? ['end', effectiveName]
+      : [
+          '{%',
+          node.whitespaceStart,
+          ' ',
+          'end',
+          node.name,
+          ' ',
+          node.whitespaceEnd,
+          '%}',
+        ];
 
   if (shouldPrintAsIs) {
     body = [

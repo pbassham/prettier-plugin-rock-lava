@@ -10,3 +10,6 @@ standalone.js.LICENSE.txt
 **/actual.lava
 coverage
 .nyc_output
+
+# preview scratch files (scripts/preview.ts --open)
+.preview/
