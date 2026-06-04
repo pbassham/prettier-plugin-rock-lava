@@ -583,13 +583,7 @@ export function printLavaRawTag(
   let body: Doc = [];
   const node = path.getValue();
   const hasEmptyBody = node.body.value.trim() === '';
-  const shouldPrintAsIs =
-    node.isIndentationSensitive ||
-    !hasLineBreakInRange(
-      node.source,
-      node.body.position.start,
-      node.body.position.end,
-    );
+
   // Rock `/- ... -/` block comment (only occurs inside a {% lava %} tag): its
   // delimiters are `/-` and `-/`, not the `name`/`endname` pattern. Inside a
   // block within the lava tag, Rock only accepts comment/endcomment, so convert.
@@ -597,6 +591,18 @@ export function printLavaRawTag(
   const convertDashToComment =
     isDashComment && lavaCommentContext(path) === 'lava-nested';
   const effectiveName = convertDashToComment ? 'comment' : node.name;
+
+  // When converting `/- ... -/` to a bare comment/endcomment block, the
+  // delimiters must be on their own lines, so never print it inline — even when
+  // the original dash comment fit on one line.
+  const shouldPrintAsIs =
+    !convertDashToComment &&
+    (node.isIndentationSensitive ||
+      !hasLineBreakInRange(
+        node.source,
+        node.body.position.start,
+        node.body.position.end,
+      ));
   const blockStart = isLavaStatement
     ? [effectiveName]
     : group([

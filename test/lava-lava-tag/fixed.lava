@@ -188,3 +188,13 @@ It should convert # to comment/endcomment inside a nested block
     echo x
   endfor
 %}
+
+It should put converted single-line /- -/ delimiters on their own lines inside a block
+{% lava
+  if cond
+    comment
+      what about this
+    endcomment
+    echo 'x'
+  endif
+%}

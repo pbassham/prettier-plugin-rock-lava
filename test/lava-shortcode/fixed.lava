@@ -9,15 +9,15 @@ It should format an inline shortcode with no arguments
 
 It should indent the children of a block shortcode
 {[ panel title:'Hello' ]}
-<p>Some body</p>
-{% assign x = 1 %}
+  <p>Some body</p>
+  {% assign x = 1 %}
 {[ endpanel ]}
 
 It should indent nested block shortcodes
 {[ panel title:'Outer' ]}
-{[ panel title:'Inner' ]}
-text
-{[ endpanel ]}
+  {[ panel title:'Inner' ]}
+    text
+  {[ endpanel ]}
 {[ endpanel ]}
 
 It should format an inline shortcode inside an html attribute

@@ -1,4 +1,4 @@
-It should not reindent raw tags bodies, as this tag is indentation sensitive
+It should not reindent raw tags, as this tag is indentation sensitive
 <div>
   {% raw %}
   const a = [1, 2, 3];
@@ -19,25 +19,25 @@ It should not reindent raw tags bodies, as this tag is indentation sensitive
   {% raw %}
   <div x=1 y=2 z=3>UNCLOSED HAHA
     {% endraw %}
-  </div>
+</div>
 
-  It should be indentation (and whitespace) sensitive
-  <p>
-    {% raw %}
-    # markdown example
+It should be indentation (and whitespace) sensitive
+<p>
+  {% raw %}
+  # markdown example
 
-    - this is a list
-    * this is indented with mixed tabs!
-    {% endraw %}
-  </p>
+  - this is a list
+  * this is indented with mixed tabs!
+  {% endraw %}
+</p>
 
-  It should be indentation (and whitespace) sensitive (useTabs)
-  useTabs: true
-  <p>
-    {% raw %}
-    # markdown example
+It should be indentation (and whitespace) sensitive (useTabs)
+useTabs: true
+<p>
+	{% raw %}
+  # markdown example
 
-    - this is a list
-    * this is indented with mixed tabs!
-    {% endraw %}
-  </p>
+  - this is a list
+  * this is indented with mixed tabs!
+  {% endraw %}
+</p>

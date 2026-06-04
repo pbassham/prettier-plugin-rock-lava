@@ -184,3 +184,11 @@ for x in col
 echo x
 endfor
 %}
+
+It should put converted single-line /- -/ delimiters on their own lines inside a block
+{% lava
+if cond
+/- what about this-/
+echo 'x'
+endif
+%}
