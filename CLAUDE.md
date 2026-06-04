@@ -29,14 +29,14 @@ commonly **embeds other languages inline**. Rock exposes Lava commands/tags that
 contain foreign-language bodies, and the plugin formats those bodies with the
 appropriate sub-formatter:
 
-| Embedded language | How it appears in Lava/Rock | Formatter used |
-| --- | --- | --- |
-| **JavaScript** | `<script>` and `{% javascript %}…{% endjavascript %}` | Prettier `babel` |
-| **CSS** | `<style>` and `{% stylesheet %}` / `{% style %}` | Prettier `css` |
-| **SQL** | `{% sql %}…{% endsql %}` (runs against SQL Server / T-SQL in Rock) | `sql-formatter` (`transactsql`, upper-cased keywords) |
-| TypeScript | `<script type="application/x-typescript">` | Prettier `typescript` |
-| JSON | `<script type="...json">` | Prettier `json` |
-| Markdown | `<script type="text/markdown">` | Prettier `markdown` |
+| Embedded language | How it appears in Lava/Rock                                        | Formatter used                                        |
+| ----------------- | ------------------------------------------------------------------ | ----------------------------------------------------- |
+| **JavaScript**    | `<script>` and `{% javascript %}…{% endjavascript %}`              | Prettier `babel`                                      |
+| **CSS**           | `<style>` and `{% stylesheet %}` / `{% style %}`                   | Prettier `css`                                        |
+| **SQL**           | `{% sql %}…{% endsql %}` (runs against SQL Server / T-SQL in Rock) | `sql-formatter` (`transactsql`, upper-cased keywords) |
+| TypeScript        | `<script type="application/x-typescript">`                         | Prettier `typescript`                                 |
+| JSON              | `<script type="...json">`                                          | Prettier `json`                                       |
+| Markdown          | `<script type="text/markdown">`                                    | Prettier `markdown`                                   |
 
 Notes:
 
