@@ -274,6 +274,13 @@ function printLavaStatement(
     return doc.utils.removeLines(['//-', text === '' ? '' : ' ', text]);
   }
 
+  // A one-line `comment test endcomment` parses as a plain tag named
+  // `comment` with markup `test endcomment`. Convert it to `//-` too.
+  if (node.name === 'comment') {
+    const text = node.markup.trim().replace(/\s*endcomment$/, '').trim();
+    return doc.utils.removeLines(['//-', text === '' ? '' : ' ', text]);
+  }
+
   const shouldSkipLeadingSpace =
     node.markup.trim() === '' ||
     (node.name === '#' && node.markup.startsWith('#'));
@@ -608,11 +615,19 @@ export function printLavaRawTag(
  * dash comment, since Rock's {% lava %} tag breaks on comment/endcomment.
  */
 function printLavaStatementComment(node: LavaRawTag): Doc {
-  const lines = bodyLines(node.body.value);
+  const value = node.body.value;
 
-  if (lines.length === 0 || node.body.value.trim() === '') {
+  if (value.trim() === '') {
     return ['//-'];
   }
+
+  // The body preserves each line's original indentation (including the first
+  // line's), so reindent the block as a whole to keep relative nesting.
+  const rawLines = value.trimEnd().split(/\r?\n/);
+  while (rawLines.length > 0 && rawLines[0].trim() === '') {
+    rawLines.shift();
+  }
+  const lines = reindent(rawLines);
 
   if (lines.length === 1) {
     return ['//- ', lines[0].trim()];
@@ -620,14 +635,16 @@ function printLavaStatementComment(node: LavaRawTag): Doc {
 
   // A `-/` in the body would terminate the dash block early, so fall back to
   // one `//-` line comment per line.
-  if (node.body.value.includes('-/')) {
+  if (value.includes('-/')) {
     return join(
       hardline,
-      reindent(lines).map((text) => (text === '' ? '//-' : `//- ${text}`)),
+      lines.map((text) =>
+        text.trim() === '' ? '//-' : `//- ${text.trim()}`,
+      ),
     );
   }
 
-  return ['/-', indent([hardline, join(hardline, reindent(lines))]), hardline, '-/'];
+  return ['/-', indent([hardline, join(hardline, lines)]), hardline, '-/'];
 }
 
 function innerLeadingWhitespace(node: LavaTag | LavaBranch) {

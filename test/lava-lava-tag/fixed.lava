@@ -199,3 +199,18 @@ It should fall back to //- per line when a comment body contains -/
   //- first line
   //- has a -/ in it
 %}
+
+It should convert a one-line comment ... endcomment statement to //-
+{% lava
+  //- test
+  assign x = 1
+%}
+
+It should keep relative indentation when converting an indented comment block
+{% lava
+  assign photoUrl = person.Photo.Url
+  /-
+    test
+      test
+  -/
+%}

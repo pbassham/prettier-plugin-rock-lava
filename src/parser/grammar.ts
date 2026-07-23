@@ -47,12 +47,14 @@ export const VOID_ELEMENTS = (
   (x: any) => x.args[0].obj,
 ) as string[];
 
+// Note: 'comment' is deliberately absent — a one-line `comment ... endcomment`
+// statement inside a {% lava %} tag carries its comment text in the markup,
+// which the printer needs to convert it to a `//-` comment.
 export const TAGS_WITHOUT_MARKUP = [
   'style',
   'javascript',
   'else',
   'break',
   'continue',
-  'comment',
   'raw',
 ];

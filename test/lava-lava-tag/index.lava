@@ -206,3 +206,18 @@ first line
 has a -/ in it
 endcomment
 %}
+
+It should convert a one-line comment ... endcomment statement to //-
+{% lava
+comment test endcomment
+assign x = 1
+%}
+
+It should keep relative indentation when converting an indented comment block
+{% lava
+assign photoUrl = person.Photo.Url
+comment
+  test
+    test
+endcomment
+%}
