@@ -28,28 +28,26 @@ It should reindent and format
 
 It should handle comments correctly
 {%- lava
-  comment
-    how u doin?
-  endcomment
+  //- how u doin?
 -%}
 
 It should handle nested comments correctly
 {%- lava
-  comment
+  /-
     how u doin?
     comment
     ho
     endcomment
-  endcomment
+  -/
 -%}
 
 It should handle empty nested comments correctly
 {%- lava
-  comment
+  /-
     how u doin?
     comment
     endcomment
-  endcomment
+  -/
 -%}
 
 It should convert invalid # inline comments to //- at the top level
@@ -137,12 +135,10 @@ It should keep leading whitespace in comments
   //- - c
 %}
 
-It should nest a bare comment/endcomment block inside an if (Rock rejects //- and /- -/ inside a lava tag)
+It should convert a comment/endcomment block inside an if to //- (Rock breaks on comment/endcomment inside a lava tag)
 {% lava
   if condition
-    comment
-      This is a comment inside an if block.
-    endcomment
+    //- This is a comment inside an if block.
     echo something
   endif
 %}
@@ -166,35 +162,40 @@ It should convert top-level # to //- but keep //- and /- -/ as-is
   -/
 %}
 
-It should convert //- and /- -/ to comment/endcomment inside any nested block
+It should keep //- and /- -/ comments as-is inside any nested block
 {% lava
   if cond
-    comment
-      dash line becomes comment block
-    endcomment
-    comment
-      dash block becomes comment block
-    endcomment
+    //- dash line stays a dash comment
+    /-
+      dash block stays a dash comment
+    -/
     echo 'foo'
   endif
 %}
 
-It should convert # to comment/endcomment inside a nested block
+It should convert # to //- inside a nested block
 {% lava
   for x in col
-    comment
-      this hash becomes a comment block
-    endcomment
+    //- this hash becomes a line comment
     echo x
   endfor
 %}
 
-It should put converted single-line /- -/ delimiters on their own lines inside a block
+It should keep a single-line /- -/ comment inline inside a block
 {% lava
   if cond
-    comment
-      what about this
-    endcomment
+    /- what about this-/
     echo 'x'
   endif
+%}
+
+It should convert an empty comment/endcomment block to //-
+{% lava
+  //-
+%}
+
+It should fall back to //- per line when a comment body contains -/
+{% lava
+  //- first line
+  //- has a -/ in it
 %}

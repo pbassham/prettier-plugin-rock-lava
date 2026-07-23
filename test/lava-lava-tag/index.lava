@@ -137,7 +137,7 @@ It should keep leading whitespace in comments
 # - c
 %}
 
-It should nest a bare comment/endcomment block inside an if (Rock rejects //- and /- -/ inside a lava tag)
+It should convert a comment/endcomment block inside an if to //- (Rock breaks on comment/endcomment inside a lava tag)
 {% lava
 if condition
 comment
@@ -166,29 +166,43 @@ keep me too
 -/
 %}
 
-It should convert //- and /- -/ to comment/endcomment inside any nested block
+It should keep //- and /- -/ comments as-is inside any nested block
 {% lava
 if cond
-//- dash line becomes comment block
+//- dash line stays a dash comment
 /-
-dash block becomes comment block
+dash block stays a dash comment
 -/
 echo 'foo'
 endif
 %}
 
-It should convert # to comment/endcomment inside a nested block
+It should convert # to //- inside a nested block
 {% lava
 for x in col
-# this hash becomes a comment block
+# this hash becomes a line comment
 echo x
 endfor
 %}
 
-It should put converted single-line /- -/ delimiters on their own lines inside a block
+It should keep a single-line /- -/ comment inline inside a block
 {% lava
 if cond
 /- what about this-/
 echo 'x'
 endif
+%}
+
+It should convert an empty comment/endcomment block to //-
+{% lava
+comment
+endcomment
+%}
+
+It should fall back to //- per line when a comment body contains -/
+{% lava
+comment
+first line
+has a -/ in it
+endcomment
 %}

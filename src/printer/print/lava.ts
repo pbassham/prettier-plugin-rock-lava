@@ -20,6 +20,7 @@ import { isBranchedTag } from '~/parser/stage-2-ast';
 import { assertNever } from '~/utils';
 
 import {
+  bodyLines,
   getWhitespaceTrim,
   hasMeaningfulLackOfLeadingWhitespace,
   hasMeaningfulLackOfTrailingWhitespace,
@@ -255,35 +256,6 @@ function printNamedLavaBlockStart(
   }
 }
 
-/**
- * Determines a comment node's position relative to an enclosing {% lava %} tag:
- *   'lava-top'    – a direct child of the lava tag (valid: //- and /- -/)
- *   'lava-nested' – inside a block (if/unless/case/for/...) within a lava tag,
- *                   where Rock only accepts comment/endcomment
- *   'outside'     – not inside a lava tag at all
- */
-function lavaCommentContext(
-  path: AstPath<any>,
-): 'lava-top' | 'lava-nested' | 'outside' {
-  let depth = 0;
-  let nested = false;
-  let parent = path.getParentNode(depth);
-  while (parent) {
-    if (parent.type === NodeTypes.LavaTag && parent.name === 'lava') {
-      return nested ? 'lava-nested' : 'lava-top';
-    }
-    if (
-      parent.type === NodeTypes.LavaTag ||
-      parent.type === NodeTypes.LavaBranch
-    ) {
-      nested = true;
-    }
-    depth += 1;
-    parent = path.getParentNode(depth);
-  }
-  return 'outside';
-}
-
 function printLavaStatement(
   path: AstPath<Extract<LavaTag, { name: string; markup: string }>>,
   _options: LavaParserOptions,
@@ -292,28 +264,14 @@ function printLavaStatement(
 ): Doc {
   const node = path.getValue();
 
-  // Rock comment quirks inside a {% lava %} tag. `#` is never valid Rock Lava;
-  // `//-` is valid at the top level but not inside a block. See
-  // lavaCommentContext above.
+  // Rock comment quirks inside a {% lava %} tag: `#` is never valid Rock Lava,
+  // and Rock's {% lava %} tag cannot parse comment/endcomment blocks, so every
+  // line comment is normalized to `//-` (Rock strips `//-` before parsing, so
+  // it is valid anywhere in the tag).
   const isLineComment = node.name === '#' || node.name === '//-';
   if (isLineComment) {
-    const context = lavaCommentContext(path);
     const text = node.markup.trim();
-    if (context === 'lava-nested') {
-      // Convert to a comment/endcomment block (the only form Rock accepts in a
-      // block within a lava tag).
-      return [
-        'comment',
-        text === '' ? '' : indent([hardline, text]),
-        hardline,
-        'endcomment',
-      ];
-    }
-    if (context === 'lava-top') {
-      // `#` is invalid in Rock; normalize every top-level line comment to `//-`.
-      return doc.utils.removeLines(['//-', text === '' ? '' : ' ', text]);
-    }
-    // 'outside': leave the inline comment untouched (handled in a later pass).
+    return doc.utils.removeLines(['//-', text === '' ? '' : ' ', text]);
   }
 
   const shouldSkipLeadingSpace =
@@ -585,26 +543,25 @@ export function printLavaRawTag(
   const hasEmptyBody = node.body.value.trim() === '';
 
   // Rock `/- ... -/` block comment (only occurs inside a {% lava %} tag): its
-  // delimiters are `/-` and `-/`, not the `name`/`endname` pattern. Inside a
-  // block within the lava tag, Rock only accepts comment/endcomment, so convert.
+  // delimiters are `/-` and `-/`, not the `name`/`endname` pattern.
   const isDashComment = node.name === '/-';
-  const convertDashToComment =
-    isDashComment && lavaCommentContext(path) === 'lava-nested';
-  const effectiveName = convertDashToComment ? 'comment' : node.name;
 
-  // When converting `/- ... -/` to a bare comment/endcomment block, the
-  // delimiters must be on their own lines, so never print it inline — even when
-  // the original dash comment fit on one line.
+  // Rock's {% lava %} tag cannot parse comment/endcomment blocks, so convert
+  // them to the dash comment styles Rock strips before parsing: `//-` when the
+  // body fits on one line, `/- ... -/` otherwise.
+  if (isLavaStatement && node.name === 'comment') {
+    return printLavaStatementComment(node);
+  }
+
   const shouldPrintAsIs =
-    !convertDashToComment &&
-    (node.isIndentationSensitive ||
-      !hasLineBreakInRange(
-        node.source,
-        node.body.position.start,
-        node.body.position.end,
-      ));
+    node.isIndentationSensitive ||
+    !hasLineBreakInRange(
+      node.source,
+      node.body.position.start,
+      node.body.position.end,
+    );
   const blockStart = isLavaStatement
-    ? [effectiveName]
+    ? [node.name]
     : group([
         '{%',
         node.whitespaceStart,
@@ -615,12 +572,11 @@ export function printLavaRawTag(
         node.whitespaceEnd,
         '%}',
       ]);
-  const blockEnd =
-    isDashComment && !convertDashToComment
-      ? ['-/']
-      : isLavaStatement
-      ? ['end', effectiveName]
-      : [
+  const blockEnd = isDashComment
+    ? ['-/']
+    : isLavaStatement
+    ? ['end', node.name]
+    : [
           '{%',
           node.whitespaceStart,
           ' ',
@@ -645,6 +601,33 @@ export function printLavaRawTag(
   }
 
   return [blockStart, ...body, blockEnd];
+}
+
+/**
+ * Prints a comment/endcomment block found inside a {% lava %} tag as a Rock
+ * dash comment, since Rock's {% lava %} tag breaks on comment/endcomment.
+ */
+function printLavaStatementComment(node: LavaRawTag): Doc {
+  const lines = bodyLines(node.body.value);
+
+  if (lines.length === 0 || node.body.value.trim() === '') {
+    return ['//-'];
+  }
+
+  if (lines.length === 1) {
+    return ['//- ', lines[0].trim()];
+  }
+
+  // A `-/` in the body would terminate the dash block early, so fall back to
+  // one `//-` line comment per line.
+  if (node.body.value.includes('-/')) {
+    return join(
+      hardline,
+      reindent(lines).map((text) => (text === '' ? '//-' : `//- ${text}`)),
+    );
+  }
+
+  return ['/-', indent([hardline, join(hardline, reindent(lines))]), hardline, '-/'];
 }
 
 function innerLeadingWhitespace(node: LavaTag | LavaBranch) {
