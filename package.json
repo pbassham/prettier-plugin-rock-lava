@@ -1,6 +1,6 @@
 {
   "name": "prettier-plugin-rock-lava",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "description": "Prettier Lava/HTML plugin for Rock RMS",
   "repository": "pbassham/prettier-plugin-rock-lava",
   "author": {
