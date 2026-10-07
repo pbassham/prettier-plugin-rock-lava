@@ -24,6 +24,7 @@ export enum NodeTypes {
   HtmlVoidElement = 'HtmlVoidElement',
   HtmlDoctype = 'HtmlDoctype',
   HtmlComment = 'HtmlComment',
+  LavaDashComment = 'LavaDashComment',
   HtmlElement = 'HtmlElement',
   HtmlDanglingMarkerOpen = 'HtmlDanglingMarkerOpen',
   HtmlDanglingMarkerClose = 'HtmlDanglingMarkerClose',
@@ -266,6 +267,7 @@ export type HtmlSelfClosingElement = Augmented<
 export type HtmlRawNode = Augmented<AST.HtmlRawNode, AllAugmentations>;
 export type HtmlDoctype = Augmented<AST.HtmlDoctype, AllAugmentations>;
 export type HtmlComment = Augmented<AST.HtmlComment, AllAugmentations>;
+export type LavaDashComment = Augmented<AST.LavaDashComment, AllAugmentations>;
 export type AttributeNode = Augmented<AST.AttributeNode, AllAugmentations>;
 export type AttrSingleQuoted = Augmented<
   AST.AttrSingleQuoted,

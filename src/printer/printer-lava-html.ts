@@ -365,6 +365,23 @@ function printNode(
       ];
     }
 
+    case NodeTypes.LavaDashComment: {
+      // `//-` runs to end of line; the hardline after it comes from
+      // preferHardlineAsSurroundingSpaces.
+      if (node.style === 'line') {
+        return ['//-', node.body.trimEnd()];
+      }
+
+      return [
+        '/-',
+        group([
+          indent([line, join(hardline, reindent(bodyLines(node.body), true))]),
+          line,
+        ]),
+        '-/',
+      ];
+    }
+
     case NodeTypes.AssignMarkup: {
       return [node.name, ' = ', path.call(print, 'value')];
     }

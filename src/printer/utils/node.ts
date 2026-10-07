@@ -263,6 +263,9 @@ export function preferHardlineAsSurroundingSpaces(node: LavaHtmlNode) {
   switch (node.type) {
     // case 'ieConditionalComment':
     case NodeTypes.HtmlComment:
+    // A `//-` line comment runs to end of line, so whatever follows it must
+    // stay on the next line or Rock would comment it out too.
+    case NodeTypes.LavaDashComment:
       return true;
     case NodeTypes.HtmlElement:
       return isTagNameIncluded(['script', 'select'], node.name);

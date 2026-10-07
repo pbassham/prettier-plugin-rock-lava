@@ -1,0 +1,58 @@
+It should keep a //- line comment and a following /- -/ block comment apart (joining them un-comments the block text)
+<p>before</p>
+//- email_GlobalFooter ]}
+/-
+  This is the global footer, wrapped in a raw tag.
+
+  Otherwise, the variables will be populated when you first select the template.
+
+  The variables processed per person:
+  - Person: the current person receiving the email
+  - campus: to get their campus address
+-/
+{% raw %}<p>raw</p>{% endraw %}
+
+It should keep consecutive //- line comments on their own lines
+<p>x</p>
+//- one
+//- two
+<p>y</p>
+
+It should keep a //- comment on its own line inside an element, before text
+<p>
+  //- note
+  Hello there
+</p>
+
+It should keep text after a trailing //- comment on the next line
+<p>
+  Hello
+  //- note
+  World
+</p>
+
+It should collapse a short /- -/ block comment onto one line
+<div>
+  /- short -/
+</div>
+
+It should reindent a multi-line /- -/ block comment
+<table>
+  <tr>
+    <td>
+      {% if a %}
+        /-
+          multi
+          line
+        -/
+        <b>x</b>
+      {% endif %}
+    </td>
+  </tr>
+</table>
+
+It should leave an unterminated /- as text
+<p>and/-or text</p>
+
+It should leave dash comments inside quoted attribute values alone
+<a title="x //- y /- z -/">link</a>

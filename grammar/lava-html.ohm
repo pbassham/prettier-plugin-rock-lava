@@ -642,8 +642,18 @@ LavaStatement <: Lava {
 }
 
 LavaHTML <: Lava {
-  Node := yamlFrontmatter? (HtmlNode | lavaNode | TextNode)*
-  openControl += "<"
+  Node := yamlFrontmatter? (HtmlNode | lavaNode | lavaDashComment | TextNode)*
+  openControl += "<" | "//-" | lavaDashBlockComment
+
+  // Rock shorthand comments in template text (Rock strips these before
+  // parsing, see LavaToLiquidTemplateConverter.RemoveLavaComments).
+  // Line: `//- ...` to end of line. Block: `/- ... -/`, possibly multi-line.
+  // An unterminated `/-` is plain text, as it is in Rock. Comments inside
+  // quoted attribute values are left alone because those are parsed by the
+  // attr* rules, which don't include this one.
+  lavaDashComment = lavaDashLineComment | lavaDashBlockComment
+  lavaDashLineComment = "//-" anyExceptStar<newline>
+  lavaDashBlockComment = "/-" anyExceptStar<"-/"> "-/"
 
   yamlFrontmatter =
     "---" newline anyExceptStar<"---"> "---" newline
