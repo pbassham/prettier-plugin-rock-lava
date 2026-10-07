@@ -46,6 +46,7 @@ export enum ConcreteNodeTypes {
   HtmlDoctype = 'HtmlDoctype',
   HtmlComment = 'HtmlComment',
   HtmlRawTag = 'HtmlRawTag',
+  LavaDashComment = 'LavaDashComment',
   HtmlVoidElement = 'HtmlVoidElement',
   HtmlSelfClosingElement = 'HtmlSelfClosingElement',
   HtmlTagOpen = 'HtmlTagOpen',
@@ -113,6 +114,14 @@ export interface ConcreteHtmlDoctype
 
 export interface ConcreteHtmlComment
   extends ConcreteBasicNode<ConcreteNodeTypes.HtmlComment> {
+  body: string;
+}
+
+/** Rock shorthand comment in template text: `//- ...` or `/- ... -/`. */
+export interface ConcreteLavaDashComment
+  extends ConcreteBasicNode<ConcreteNodeTypes.LavaDashComment> {
+  style: 'line' | 'block';
+  /** Text between the delimiters, verbatim. */
   body: string;
 }
 
@@ -439,6 +448,7 @@ export interface ConcreteYamlFrontmatterNode
 export type LavaHtmlConcreteNode =
   | ConcreteHtmlNode
   | ConcreteLavaNode
+  | ConcreteLavaDashComment
   | ConcreteTextNode
   | ConcreteYamlFrontmatterNode;
 
@@ -1120,6 +1130,26 @@ function toCST<T>(
     HtmlComment: {
       type: ConcreteNodeTypes.HtmlComment,
       body: markup(1),
+      locStart,
+      locEnd,
+      source,
+    },
+
+    lavaDashComment: 0,
+
+    lavaDashLineComment: {
+      type: ConcreteNodeTypes.LavaDashComment,
+      style: 'line',
+      body: (tokens: Node[]) => tokens[1].sourceString,
+      locStart,
+      locEnd,
+      source,
+    },
+
+    lavaDashBlockComment: {
+      type: ConcreteNodeTypes.LavaDashComment,
+      style: 'block',
+      body: (tokens: Node[]) => tokens[1].sourceString,
       locStart,
       locEnd,
       source,

@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Rock shorthand comments in template text (`//- ...` and `/- ... -/`) are now
+  parsed as comments instead of plain text. Previously Prettier reflowed them
+  like prose, which could change what Rock renders: a `/-` block comment that
+  followed a `//-` line was joined onto that line, so Rock treated the rest of
+  the block as visible output. Line comments now always end their line, short
+  block comments collapse onto one line, and multi-line block comments are
+  reindented like HTML comments. An unterminated `/-` and comments inside
+  quoted attribute values are left as text, matching Rock.
+
 ## [0.10.0]
 
 ### Removed

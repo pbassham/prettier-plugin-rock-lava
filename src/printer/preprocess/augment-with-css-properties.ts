@@ -117,6 +117,7 @@ function getCssDisplay(
 
     case NodeTypes.HtmlDoctype:
     case NodeTypes.HtmlComment:
+    case NodeTypes.LavaDashComment:
       return 'block';
 
     case NodeTypes.Document:
@@ -212,6 +213,7 @@ function getNodeCssStyleWhiteSpace(node: AugmentedNode<WithSiblings>): string {
 
     case NodeTypes.HtmlDoctype:
     case NodeTypes.HtmlComment:
+    case NodeTypes.LavaDashComment:
       return CSS_WHITE_SPACE_DEFAULT;
 
     case NodeTypes.Document:

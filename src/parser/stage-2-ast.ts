@@ -97,6 +97,7 @@ export type LavaHtmlNode =
   | LavaNode
   | HtmlDoctype
   | HtmlNode
+  | LavaDashComment
   | AttributeNode
   | LavaVariable
   | LavaExpression
@@ -485,6 +486,16 @@ export interface HtmlDoctype extends ASTNode<NodeTypes.HtmlDoctype> {
 }
 
 export interface HtmlComment extends ASTNode<NodeTypes.HtmlComment> {
+  body: string;
+}
+
+/**
+ * Rock shorthand comment in template text: `//- ...` (line) or `/- ... -/`
+ * (block). Rock strips these before parsing, so they're printed verbatim.
+ */
+export interface LavaDashComment extends ASTNode<NodeTypes.LavaDashComment> {
+  style: 'line' | 'block';
+  /** Text between the delimiters, verbatim. */
   body: string;
 }
 
@@ -921,6 +932,17 @@ function buildAst(
       case ConcreteNodeTypes.HtmlComment: {
         builder.push({
           type: NodeTypes.HtmlComment,
+          body: node.body,
+          position: position(node),
+          source: node.source,
+        });
+        break;
+      }
+
+      case ConcreteNodeTypes.LavaDashComment: {
+        builder.push({
+          type: NodeTypes.LavaDashComment,
+          style: node.style,
           body: node.body,
           position: position(node),
           source: node.source,
