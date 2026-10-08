@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.6]
+
+### Fixed
+
+- Raw tags no longer lose their parameters when formatted. `{% javascript %}`,
+  `{% style %}` and `{% raw %}` had their markup stripped (e.g.
+  `{% javascript url:'~/Scripts/moment.min.js' id:'moment' %}` became a bare
+  `{% javascript %}`, silently dropping external script includes), and inside
+  a `{% lava %}` tag every raw tag (`javascript`, `stylesheet`, `style`, `sql`,
+  `raw`) lost its parameters. Parameters are now kept verbatim, with or
+  without an embedded-language body.
+
 ## [0.10.5]
 
 ### Fixed

@@ -1,9 +1,9 @@
-It should strip arguments from style tags
-{% style %}
+It should keep parameters on style tags
+{% style what %}
 {% endstyle %}
 
-It should strip arguments from javascript tags
-{% javascript %}
+It should keep parameters on javascript tags
+{% javascript what %}
 {% endjavascript %}
 
 It should strip arguments from else tags
@@ -22,5 +22,5 @@ It should strip arguments from comment tags
 {% comment %}
 {% endcomment %}
 
-It should strip arguments from raw tags
-{% raw %}{% endraw %}
+It should keep parameters on raw tags
+{% raw what %}{% endraw %}

@@ -1,0 +1,70 @@
+It should keep javascript url and id parameters with an empty body
+{% javascript url:'~/Scripts/moment.min.js' id:'moment' %}{% endjavascript %}
+
+It should keep javascript parameters with an empty multi-line body
+{% javascript url:'~/Scripts/moment.min.js' id:'moment' references:'jquery' %}
+{% endjavascript %}
+
+It should keep javascript parameters and still format the body
+{% javascript id:'x' disableanonymousfunction:'true' %}
+  var a = 1;
+  function f() {
+    return a;
+  }
+{% endjavascript %}
+
+It should keep javascript parameters with whitespace control
+{%- javascript id:'x' -%}
+  var a = 1;
+{%- endjavascript -%}
+
+It should keep stylesheet parameters and still format the body
+{% stylesheet id:'x' compile:'less' %}
+  .a {
+    color: red;
+    .b {
+      color: blue;
+    }
+  }
+{% endstylesheet %}
+
+It should keep style parameters
+{% style id:'y' %}
+  .a {
+    color: red;
+  }
+{% endstyle %}
+
+It should keep sql parameters and still format the body
+{% sql return:'rows' statement:'command' %}
+  SELECT
+    [NickName]
+  FROM
+    [Person]
+  WHERE
+    [Id] = 1
+{% endsql %}
+
+It should keep sql parameters when the body contains Lava
+{% sql return:'rows' %}
+  SELECT [NickName] FROM [Person] WHERE [LastName] = '{{ lastName }}'
+{% endsql %}
+
+It should leave raw tags without parameters unchanged
+{% raw %}{{ not lava }}{% endraw %}
+
+It should keep raw tag parameters inside a lava tag
+{% lava
+  sql return:'rows' statement:'command'
+    SELECT
+      1
+  endsql
+  javascript id:'x' url:'~/Scripts/a.js'
+    var a = 1;
+  endjavascript
+  stylesheet id:'s' compile:'less'
+    .a {
+      color: red;
+    }
+  endstylesheet
+%}
