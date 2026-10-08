@@ -277,7 +277,10 @@ function printLavaStatement(
   // A one-line `comment test endcomment` parses as a plain tag named
   // `comment` with markup `test endcomment`. Convert it to `//-` too.
   if (node.name === 'comment') {
-    const text = node.markup.trim().replace(/\s*endcomment$/, '').trim();
+    const text = node.markup
+      .trim()
+      .replace(/\s*endcomment$/, '')
+      .trim();
     return doc.utils.removeLines(['//-', text === '' ? '' : ' ', text]);
   }
 
@@ -584,15 +587,15 @@ export function printLavaRawTag(
     : isLavaStatement
     ? ['end', node.name]
     : [
-          '{%',
-          node.whitespaceStart,
-          ' ',
-          'end',
-          node.name,
-          ' ',
-          node.whitespaceEnd,
-          '%}',
-        ];
+        '{%',
+        node.whitespaceStart,
+        ' ',
+        'end',
+        node.name,
+        ' ',
+        node.whitespaceEnd,
+        '%}',
+      ];
 
   if (shouldPrintAsIs) {
     body = [
@@ -638,9 +641,7 @@ function printLavaStatementComment(node: LavaRawTag): Doc {
   if (value.includes('-/')) {
     return join(
       hardline,
-      lines.map((text) =>
-        text.trim() === '' ? '//-' : `//- ${text.trim()}`,
-      ),
+      lines.map((text) => (text.trim() === '' ? '//-' : `//- ${text.trim()}`)),
     );
   }
 
