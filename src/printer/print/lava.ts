@@ -571,7 +571,7 @@ export function printLavaRawTag(
       node.body.position.end,
     );
   const blockStart = isLavaStatement
-    ? [node.name]
+    ? [node.name, node.markup ? ` ${node.markup}` : '']
     : group([
         '{%',
         node.whitespaceStart,

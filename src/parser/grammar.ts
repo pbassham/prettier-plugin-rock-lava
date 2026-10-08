@@ -50,11 +50,9 @@ export const VOID_ELEMENTS = (
 // Note: 'comment' is deliberately absent — a one-line `comment ... endcomment`
 // statement inside a {% lava %} tag carries its comment text in the markup,
 // which the printer needs to convert it to a `//-` comment.
-export const TAGS_WITHOUT_MARKUP = [
-  'style',
-  'javascript',
-  'else',
-  'break',
-  'continue',
-  'raw',
-];
+//
+// The raw tags (raw, javascript, style, stylesheet, sql) are also absent:
+// unlike Shopify Liquid, Rock's raw tags take named parameters (e.g.
+// `{% javascript url:'...' id:'...' %}`, `{% sql return:'x' %}`) that must
+// survive formatting.
+export const TAGS_WITHOUT_MARKUP = ['else', 'break', 'continue'];
